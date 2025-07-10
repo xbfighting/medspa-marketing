@@ -18,6 +18,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Checkbox } from '@/components/ui/checkbox'
 import { EmailEditor } from './email-editor'
+import { EmailPreview } from './email-preview'
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -635,20 +636,30 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
               </div>
 
               <div className="bg-white border rounded-lg p-6">
-                <h4 className="font-medium mb-3">Content Preview</h4>
-                {campaignDetails.type === 'Email' && (
-                  <>
-                    <div className="mb-3">
-                      <div className="text-sm text-gray-600">Subject</div>
-                      <div className="font-medium">{generatedContent.subject}</div>
+                <h4 className="font-medium mb-4">Content Preview</h4>
+                {campaignDetails.type === 'Email' ? (
+                  <EmailPreview
+                    subject={generatedContent.subject}
+                    content={generatedContent.content}
+                    previewText={generatedContent.previewText}
+                    fromName="MedSpa Clinic"
+                    fromEmail="hello@medspaclinic.com"
+                    recipientName="Sarah Johnson"
+                    recipientEmail="sarah@example.com"
+                  />
+                ) : (
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-sm text-gray-600 mb-1">SMS Content</div>
+                      <div className="bg-gray-50 border rounded-lg p-4 font-mono text-sm">
+                        {generatedContent.content}
+                      </div>
                     </div>
-                    <div className="mb-3">
-                      <div className="text-sm text-gray-600">Preview</div>
-                      <div className="text-sm text-gray-700">{generatedContent.previewText}</div>
+                    <div className="text-xs text-gray-500">
+                      Character count: {generatedContent.content.length}/160 (SMS limit)
                     </div>
-                  </>
+                  </div>
                 )}
-                <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: generatedContent.content }} />
               </div>
 
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
