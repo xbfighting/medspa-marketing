@@ -102,10 +102,10 @@ export function CustomerCard({ customer }: CustomerCardProps) {
             <div className="text-center">
               <div className="flex items-center justify-center text-sm text-gray-500 mb-1">
                 <DollarSign className="h-4 w-4 mr-1" />
-                Total Spent
+                Total Value
               </div>
               <div className="font-semibold text-gray-900">
-                ${customer.totalSpent?.toLocaleString() || '0'}
+                ${customer.customerValue?.toLocaleString() || customer.totalSpent?.toLocaleString() || '0'}
               </div>
             </div>
             <div className="text-center">

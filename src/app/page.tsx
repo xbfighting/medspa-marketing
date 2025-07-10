@@ -36,30 +36,38 @@ export default function Home() {
   // Calculate KPIs
   const totalCustomers = customers.length
   const activeCampaigns = campaigns.filter(c => c.status === 'Active').length
-  const avgOpenRate = campaigns.length > 0 
-    ? campaigns.reduce((sum, c) => sum + (c.metrics.opened / c.metrics.sent * 100), 0) / campaigns.length
+
+  const avgOpenRate = campaigns.length > 0
+    ? campaigns.reduce((sum, c) => {
+        const metrics = c.metrics || c.performance
+        if (!metrics) return sum
+        return sum + (metrics.opened / metrics.sent) * 100
+      }, 0) / campaigns.length
     : 0
-  const totalRevenue = campaigns.reduce((sum, c) => sum + c.metrics.revenue, 0)
+  const totalRevenue = campaigns.reduce((sum, c) => {
+    const metrics = c.metrics || c.performance
+    return sum + (metrics?.revenue || 0)
+  }, 0)
 
   // Lifecycle distribution data
   const lifecycleData = [
-    { 
-      name: 'New', 
+    {
+      name: 'New',
       value: customers.filter(c => c.lifecycleStage === 'New').length,
       color: '#9333ea'
     },
-    { 
-      name: 'Active', 
+    {
+      name: 'Active',
       value: customers.filter(c => c.lifecycleStage === 'Active').length,
       color: '#059669'
     },
-    { 
-      name: 'At-Risk', 
+    {
+      name: 'At-Risk',
       value: customers.filter(c => c.lifecycleStage === 'At-Risk').length,
       color: '#dc2626'
     },
-    { 
-      name: 'Dormant', 
+    {
+      name: 'Dormant',
       value: customers.filter(c => c.lifecycleStage === 'Dormant').length,
       color: '#6b7280'
     }
@@ -119,7 +127,7 @@ export default function Home() {
       <h1 className="text-3xl font-bold text-gray-900 mb-6">
         Dashboard
       </h1>
-      
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <KPICard

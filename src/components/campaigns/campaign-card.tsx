@@ -34,19 +34,28 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
     }
   }
 
+  const getMetrics = () => {
+    return campaign.metrics || campaign.performance || {
+      sent: 0, opened: 0, clicked: 0, converted: 0, revenue: 0
+    }
+  }
+
   const calculateOpenRate = () => {
-    if (campaign.metrics.sent === 0) return 0
-    return ((campaign.metrics.opened / campaign.metrics.sent) * 100).toFixed(1)
+    const metrics = getMetrics()
+    if (metrics.sent === 0) return 0
+    return ((metrics.opened / metrics.sent) * 100).toFixed(1)
   }
 
   const calculateClickRate = () => {
-    if (campaign.metrics.opened === 0) return 0
-    return ((campaign.metrics.clicked / campaign.metrics.opened) * 100).toFixed(1)
+    const metrics = getMetrics()
+    if (metrics.opened === 0) return 0
+    return ((metrics.clicked / metrics.opened) * 100).toFixed(1)
   }
 
   const calculateConversionRate = () => {
-    if (campaign.metrics.sent === 0) return 0
-    return ((campaign.metrics.converted / campaign.metrics.sent) * 100).toFixed(1)
+    const metrics = getMetrics()
+    if (metrics.sent === 0) return 0
+    return ((metrics.converted / metrics.sent) * 100).toFixed(1)
   }
 
   return (
@@ -82,15 +91,15 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4" />
               <span>
-                {campaign.schedule?.sendAt 
-                  ? format(new Date(campaign.schedule.sendAt), 'MMM dd, yyyy')
-                  : format(new Date(campaign.createdAt), 'MMM dd, yyyy')
+                {campaign.scheduledDate || campaign.schedule?.sendAt 
+                  ? format(new Date(campaign.scheduledDate || campaign.schedule.sendAt), 'MMM dd, yyyy')
+                  : format(new Date(campaign.createdDate || campaign.createdAt), 'MMM dd, yyyy')
                 }
               </span>
             </div>
             <div className="flex items-center space-x-1">
               <Users className="h-4 w-4" />
-              <span>{campaign.metrics.sent.toLocaleString()} sent</span>
+              <span>{getMetrics().sent.toLocaleString()} sent</span>
             </div>
           </div>
 
@@ -121,33 +130,44 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
             <div className="flex items-center space-x-4 text-sm">
               <div className="flex items-center space-x-1 text-gray-600">
                 <TrendingUp className="h-4 w-4" />
-                <span>{campaign.metrics.clicked.toLocaleString()} clicks</span>
+                <span>{getMetrics().clicked.toLocaleString()} clicks</span>
               </div>
               <div className="flex items-center space-x-1 text-gray-600">
                 <DollarSign className="h-4 w-4" />
-                <span>${campaign.metrics.revenue.toLocaleString()}</span>
+                <span>${getMetrics().revenue.toLocaleString()}</span>
               </div>
             </div>
             <div className="text-xs text-gray-500">
-              {campaign.createdAt 
-                ? formatDistanceToNow(new Date(campaign.createdAt), { addSuffix: true })
+              {campaign.createdDate || campaign.createdAt 
+                ? formatDistanceToNow(new Date(campaign.createdDate || campaign.createdAt), { addSuffix: true })
                 : ''
               }
             </div>
           </div>
 
           {/* Target Audience */}
-          {campaign.targetAudience?.segments && campaign.targetAudience.segments.length > 0 && (
+          {((campaign.targetAudience?.segments && campaign.targetAudience.segments.length > 0) || 
+            (campaign.targetSegment?.lifecycleStages && campaign.targetSegment.lifecycleStages.length > 0)) && (
             <div className="flex flex-wrap gap-1 pt-2 border-t border-gray-100">
-              {campaign.targetAudience.segments.slice(0, 2).map((segment, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
-                  {segment}
-                </Badge>
-              ))}
-              {campaign.targetAudience.segments.length > 2 && (
-                <Badge variant="secondary" className="text-xs">
-                  +{campaign.targetAudience.segments.length - 2} more
-                </Badge>
+              {campaign.targetAudience?.segments ? (
+                <>
+                  {campaign.targetAudience.segments.slice(0, 2).map((segment, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {segment}
+                    </Badge>
+                  ))}
+                  {campaign.targetAudience.segments.length > 2 && (
+                    <Badge variant="secondary" className="text-xs">
+                      +{campaign.targetAudience.segments.length - 2} more
+                    </Badge>
+                  )}
+                </>
+              ) : (
+                campaign.targetSegment?.lifecycleStages?.slice(0, 2).map((stage, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs">
+                    {stage}
+                  </Badge>
+                ))
               )}
             </div>
           )}

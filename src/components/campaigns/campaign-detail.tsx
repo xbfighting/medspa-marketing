@@ -50,10 +50,17 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
     }
   }
 
+  const getMetrics = () => {
+    return campaign.metrics || campaign.performance || {
+      sent: 0, opened: 0, clicked: 0, converted: 0, revenue: 0
+    }
+  }
+
   const calculateRates = () => {
-    const openRate = campaign.metrics.sent > 0 ? (campaign.metrics.opened / campaign.metrics.sent) * 100 : 0
-    const clickRate = campaign.metrics.opened > 0 ? (campaign.metrics.clicked / campaign.metrics.opened) * 100 : 0
-    const conversionRate = campaign.metrics.sent > 0 ? (campaign.metrics.converted / campaign.metrics.sent) * 100 : 0
+    const metrics = getMetrics()
+    const openRate = metrics.sent > 0 ? (metrics.opened / metrics.sent) * 100 : 0
+    const clickRate = metrics.opened > 0 ? (metrics.clicked / metrics.opened) * 100 : 0
+    const conversionRate = metrics.sent > 0 ? (metrics.converted / metrics.sent) * 100 : 0
     
     return { openRate, clickRate, conversionRate }
   }
@@ -142,21 +149,23 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
             <div className="flex justify-between">
               <span className="text-sm text-gray-600">Created</span>
               <span className="text-sm font-medium">
-                {format(new Date(campaign.createdAt), 'MMM dd, yyyy')}
+                {format(new Date(campaign.createdDate || campaign.createdAt), 'MMM dd, yyyy')}
               </span>
             </div>
-            {campaign.schedule?.sendAt && (
+            {(campaign.scheduledDate || campaign.schedule?.sendAt) && (
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Scheduled</span>
                 <span className="text-sm font-medium">
-                  {format(new Date(campaign.schedule.sendAt), 'MMM dd, yyyy HH:mm')}
+                  {format(new Date(campaign.scheduledDate || campaign.schedule.sendAt), 'MMM dd, yyyy HH:mm')}
                 </span>
               </div>
             )}
-            <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Created by</span>
-              <span className="text-sm font-medium">{campaign.createdBy}</span>
-            </div>
+            {campaign.createdBy && (
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Created by</span>
+                <span className="text-sm font-medium">{campaign.createdBy}</span>
+              </div>
+            )}
             {campaign.schedule?.timezone && (
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Timezone</span>
@@ -194,7 +203,7 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
                   <span className="text-sm font-medium">Sent</span>
                 </div>
                 <span className="font-bold text-lg">
-                  {campaign.metrics.sent.toLocaleString()}
+                  {getMetrics().sent.toLocaleString()}
                 </span>
               </div>
               
@@ -205,7 +214,7 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
                     <span className="text-sm font-medium">Opened</span>
                   </div>
                   <span className="font-bold text-lg">
-                    {campaign.metrics.opened.toLocaleString()} ({openRate.toFixed(1)}%)
+                    {getMetrics().opened.toLocaleString()} ({openRate.toFixed(1)}%)
                   </span>
                 </div>
                 <Progress value={openRate} className="h-2" />
@@ -218,7 +227,7 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
                     <span className="text-sm font-medium">Clicked</span>
                   </div>
                   <span className="font-bold text-lg">
-                    {campaign.metrics.clicked.toLocaleString()} ({clickRate.toFixed(1)}%)
+                    {getMetrics().clicked.toLocaleString()} ({clickRate.toFixed(1)}%)
                   </span>
                 </div>
                 <Progress value={clickRate} className="h-2" />
@@ -231,7 +240,7 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
                     <span className="text-sm font-medium">Converted</span>
                   </div>
                   <span className="font-bold text-lg">
-                    {campaign.metrics.converted.toLocaleString()} ({conversionRate.toFixed(1)}%)
+                    {getMetrics().converted.toLocaleString()} ({conversionRate.toFixed(1)}%)
                   </span>
                 </div>
                 <Progress value={conversionRate} className="h-2" />
@@ -243,7 +252,7 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
                   <span className="text-sm font-medium">Revenue</span>
                 </div>
                 <span className="font-bold text-lg text-green-600">
-                  ${campaign.metrics.revenue.toLocaleString()}
+                  ${getMetrics().revenue.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -266,6 +275,14 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
                   {campaign.targetAudience.segments.map((segment, index) => (
                     <Badge key={index} variant="outline" className="text-xs">
                       {segment}
+                    </Badge>
+                  ))}
+                </div>
+              ) : campaign.targetSegment?.lifecycleStages && campaign.targetSegment.lifecycleStages.length > 0 ? (
+                <div className="flex flex-wrap gap-1">
+                  {campaign.targetSegment.lifecycleStages.map((stage, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {stage}
                     </Badge>
                   ))}
                 </div>

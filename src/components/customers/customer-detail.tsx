@@ -185,7 +185,7 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
             <div className="flex items-center space-x-3">
               <Calendar className="h-4 w-4 text-gray-400" />
               <span className="text-sm">
-                Joined {customer.joinDate ? format(new Date(customer.joinDate), 'MMM dd, yyyy') : 'Unknown'}
+                Joined {customer.registrationDate || customer.joinDate ? format(new Date(customer.registrationDate || customer.joinDate), 'MMM dd, yyyy') : 'Unknown'}
               </span>
             </div>
             <div className="flex items-center space-x-3">
@@ -224,7 +224,7 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
                 <span className="text-sm font-medium">Total Spent</span>
               </div>
               <span className="font-bold text-lg">
-                ${customer.totalSpent?.toLocaleString() || '0'}
+                ${customer.customerValue?.toLocaleString() || customer.totalSpent?.toLocaleString() || '0'}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -242,7 +242,7 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
                 <span className="text-sm font-medium">Avg. Spend</span>
               </div>
               <span className="font-bold text-lg">
-                ${customer.visitCount ? Math.round((customer.totalSpent || 0) / customer.visitCount) : 0}
+                ${customer.visitCount ? Math.round((customer.customerValue || customer.totalSpent || 0) / customer.visitCount) : 0}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -251,7 +251,7 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
                 <span className="text-sm font-medium">Loyalty Points</span>
               </div>
               <span className="font-bold text-lg">
-                {Math.round((customer.totalSpent || 0) * 0.1)}
+                {Math.round((customer.customerValue || customer.totalSpent || 0) * 0.1)}
               </span>
             </div>
           </CardContent>
