@@ -339,9 +339,14 @@ export function CampaignDetail({ campaign }: CampaignDetailProps) {
             </div>
             <div className="space-y-2">
               <div className="text-sm text-gray-600">Content:</div>
-              <div className="prose prose-sm max-w-none">
-                {campaign.content || 'Content preview not available'}
-              </div>
+              {campaign.type === 'Email' ? (
+                <div className="prose prose-sm max-w-none" 
+                     dangerouslySetInnerHTML={{ __html: campaign.content || '<p>Content preview not available</p>' }} />
+              ) : (
+                <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                  {campaign.content || 'Content preview not available'}
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

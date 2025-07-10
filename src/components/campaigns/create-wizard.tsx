@@ -531,12 +531,30 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
                   
                   <div>
                     <Label className="text-sm">Content</Label>
-                    <Textarea 
-                      rows={campaignDetails.type === 'SMS' ? 3 : 10}
-                      value={generatedContent.content}
-                      onChange={(e) => setGeneratedContent({...generatedContent, content: e.target.value})}
-                      className="font-mono text-sm"
-                    />
+                    {campaignDetails.type === 'Email' ? (
+                      <div className="space-y-2">
+                        <div className="prose prose-sm max-w-none p-4 bg-white border rounded-lg" 
+                             dangerouslySetInnerHTML={{ __html: generatedContent.content }} />
+                        <details className="text-sm">
+                          <summary className="cursor-pointer text-gray-600 hover:text-gray-900">
+                            Edit HTML Source
+                          </summary>
+                          <Textarea 
+                            rows={10}
+                            value={generatedContent.content}
+                            onChange={(e) => setGeneratedContent({...generatedContent, content: e.target.value})}
+                            className="font-mono text-xs mt-2"
+                          />
+                        </details>
+                      </div>
+                    ) : (
+                      <Textarea 
+                        rows={3}
+                        value={generatedContent.content}
+                        onChange={(e) => setGeneratedContent({...generatedContent, content: e.target.value})}
+                        className="text-sm"
+                      />
+                    )}
                   </div>
                 </div>
               )}

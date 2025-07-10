@@ -31,12 +31,19 @@ export const AI_TEMPLATES: AITemplate[] = [
     variables: ['treatmentName', 'benefits', 'specialOffer', 'deadline'],
     baseContent: {
       email: `
-        <p>Dear {{customerName}},</p>
-        <p>We're excited to introduce {{treatmentName}} to our treatment menu!</p>
-        <p>This innovative treatment offers:</p>
-        <ul>{{benefits}}</ul>
-        <p>{{specialOffer}}</p>
-        <p>Book by {{deadline}} to secure your appointment.</p>
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <p>Dear {{customerName}},</p>
+          <p>We're excited to introduce <strong>{{treatmentName}}</strong> to our treatment menu!</p>
+          <p>This innovative treatment offers:</p>
+          <ul style="margin: 20px 0;">{{benefits}}</ul>
+          <div style="background-color: #f8f4ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 18px; color: #9333ea;"><strong>{{specialOffer}}</strong></p>
+          </div>
+          <p>Book by <strong>{{deadline}}</strong> to secure your appointment.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="#" style="background-color: #9333ea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Book Now</a>
+          </div>
+        </div>
       `,
       sms: `Hi {{customerName}}! New {{treatmentName}} now available. {{specialOffer}} Book by {{deadline}}.`
     }
@@ -49,12 +56,19 @@ export const AI_TEMPLATES: AITemplate[] = [
     variables: ['daysSinceLastTreatment', 'treatmentType', 'doctorName', 'availableSlots'],
     baseContent: {
       email: `
-        <p>Hi {{customerName}},</p>
-        <p>It's been {{daysSinceLastTreatment}} days since your last {{treatmentType}} treatment with {{doctorName}}.</p>
-        <p>To maintain your amazing results, we recommend scheduling your next appointment.</p>
-        <p>Available times this week:</p>
-        <ul>{{availableSlots}}</ul>
-        <p>Your regular treatment schedule helps ensure optimal results!</p>
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <p>Hi {{customerName}},</p>
+          <p>It's been <strong>{{daysSinceLastTreatment}} days</strong> since your last {{treatmentType}} treatment with {{doctorName}}.</p>
+          <p>To maintain your amazing results, we recommend scheduling your next appointment.</p>
+          <div style="background-color: #f0f9ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0 0 10px 0;"><strong>Available times this week:</strong></p>
+            <ul style="margin: 0;">{{availableSlots}}</ul>
+          </div>
+          <p>Your regular treatment schedule helps ensure optimal results!</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="#" style="background-color: #059669; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Book Appointment</a>
+          </div>
+        </div>
       `,
       sms: `Hi {{customerName}}! Time for your {{treatmentType}} touch-up with {{doctorName}}. {{availableSlots}} available. Book now!`
     }
@@ -67,12 +81,19 @@ export const AI_TEMPLATES: AITemplate[] = [
     variables: ['exclusiveOffer', 'savingsAmount', 'validUntil', 'loyaltyPoints'],
     baseContent: {
       email: `
-        <p>Dear {{customerName}},</p>
-        <p>As our valued {{loyaltyTier}} member, you've earned an exclusive reward!</p>
-        <p>{{exclusiveOffer}}</p>
-        <p>Your savings: {{savingsAmount}}</p>
-        <p>Plus, earn {{loyaltyPoints}} bonus points with this treatment.</p>
-        <p>This exclusive offer is valid until {{validUntil}}.</p>
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <p>Dear {{customerName}},</p>
+          <p>As our valued <span style="color: #9333ea; font-weight: bold;">{{loyaltyTier}} member</span>, you've earned an exclusive reward!</p>
+          <div style="background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%); color: white; padding: 25px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <h2 style="margin: 0 0 10px 0; font-size: 24px;">{{exclusiveOffer}}</h2>
+            <p style="margin: 0; font-size: 20px;">Your savings: <strong>{{savingsAmount}}</strong></p>
+          </div>
+          <p>Plus, earn <strong>{{loyaltyPoints}} bonus points</strong> with this treatment.</p>
+          <p style="color: #dc2626;">This exclusive offer is valid until <strong>{{validUntil}}</strong>.</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="#" style="background-color: #9333ea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Claim Your Reward</a>
+          </div>
+        </div>
       `,
       sms: `{{customerName}}, your {{loyaltyTier}} exclusive: {{exclusiveOffer}} Save {{savingsAmount}}! Valid until {{validUntil}}.`
     }
@@ -160,13 +181,45 @@ export function generateContent(
     content = content.replace(/{{loyaltyTier}}/g, options.personalization.loyaltyTier)
   }
   
+  // Apply custom fields with default values
+  const defaultValues: Record<string, string> = {
+    treatmentName: 'Morpheus8 Skin Tightening',
+    benefits: '<li>Stimulates collagen production</li><li>Tightens loose skin</li><li>Reduces fine lines and wrinkles</li><li>Minimal downtime</li>',
+    specialOffer: '20% OFF First Treatment',
+    deadline: 'December 31st',
+    daysSinceLastTreatment: '90',
+    treatmentType: 'Botox',
+    doctorName: 'Dr. Johnson',
+    availableSlots: '<li>Monday 9:00 AM</li><li>Wednesday 2:00 PM</li><li>Friday 10:00 AM</li>',
+    exclusiveOffer: '30% OFF Any Treatment',
+    savingsAmount: '$300',
+    validUntil: 'December 31st',
+    loyaltyPoints: '500',
+    season: 'Holiday',
+    treatments: '<li>Botox Touch-ups</li><li>Holiday Glow Facial</li><li>Laser Hair Removal</li>',
+    discount: '25% OFF',
+    bookingDeadline: 'December 20th',
+    tipTitle: 'The Importance of Daily SPF',
+    tipContent: 'Did you know that 90% of visible aging is caused by sun damage? Daily SPF application is your best defense against premature aging, dark spots, and skin cancer.',
+    relatedTreatment: 'IPL PhotoFacial',
+    ctaText: 'Learn more about our sun damage reversal treatments'
+  }
+  
   // Apply custom fields
   if (options.personalization.customFields) {
     Object.entries(options.personalization.customFields).forEach(([key, value]) => {
       const regex = new RegExp(`{{${key}}}`, 'g')
-      content = content.replace(regex, value)
+      content = content.replace(regex, value || defaultValues[key] || '')
     })
   }
+  
+  // Replace any remaining template variables with defaults
+  template.variables.forEach(variable => {
+    const regex = new RegExp(`{{${variable}}}`, 'g')
+    if (content.match(regex)) {
+      content = content.replace(regex, defaultValues[variable] || '')
+    }
+  })
 
   // Apply tone modifiers
   const toneModifier = TONE_MODIFIERS[options.tone]
