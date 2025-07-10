@@ -1,7 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { 
   LayoutDashboard, 
@@ -10,30 +8,31 @@ import {
   BarChart3, 
   Settings 
 } from 'lucide-react'
+import { NavItem } from './nav-item'
 
 const navigation = [
   {
-    name: 'Dashboard',
+    label: 'Dashboard',
     href: '/',
     icon: LayoutDashboard,
   },
   {
-    name: 'Customers',
+    label: 'Customers',
     href: '/customers',
     icon: Users,
   },
   {
-    name: 'Campaigns',
+    label: 'Campaigns',
     href: '/campaigns',
     icon: Mail,
   },
   {
-    name: 'Analytics',
+    label: 'Analytics',
     href: '/analytics',
     icon: BarChart3,
   },
   {
-    name: 'Settings',
+    label: 'Settings',
     href: '/settings',
     icon: Settings,
   },
@@ -44,17 +43,15 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className }: SidebarProps) {
-  const pathname = usePathname()
-
   return (
     <div className={cn(
-      "flex h-full w-64 flex-col bg-white border-r border-gray-200",
+      "flex h-full w-64 flex-col bg-white border-r border-gray-200 shadow-sm",
       className
     )}>
       {/* Logo */}
-      <div className="flex h-16 items-center px-6">
-        <div className="flex items-center space-x-2">
-          <div className="h-8 w-8 rounded-lg bg-primary-500 flex items-center justify-center">
+      <div className="flex h-16 items-center px-6 border-b border-gray-100">
+        <div className="flex items-center space-x-3">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md">
             <span className="text-white font-bold text-sm">M</span>
           </div>
           <span className="text-xl font-bold text-gray-900">
@@ -64,36 +61,19 @@ export function Sidebar({ className }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-4 space-y-1">
-        {navigation.map((item) => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
-                isActive
-                  ? "bg-primary-50 text-primary-700 border-r-2 border-primary-500"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              )}
-            >
-              <item.icon
-                className={cn(
-                  "mr-3 h-5 w-5 flex-shrink-0",
-                  isActive
-                    ? "text-primary-500"
-                    : "text-gray-400 group-hover:text-gray-500"
-                )}
-              />
-              {item.name}
-            </Link>
-          )
-        })}
+      <nav className="flex-1 px-4 py-6 space-y-2">
+        {navigation.map((item) => (
+          <NavItem
+            key={item.label}
+            icon={item.icon}
+            label={item.label}
+            href={item.href}
+          />
+        ))}
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-4 border-t border-gray-200">
+      <div className="px-4 py-4 border-t border-gray-100">
         <div className="text-xs text-gray-500 text-center">
           Powered by AI Marketing
         </div>

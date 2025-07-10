@@ -1,7 +1,6 @@
-import Link from 'next/link'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { InteractiveCard } from '@/components/ui/interactive-card'
 import { Customer } from '@/lib/types'
 import { Phone, Mail, Calendar, DollarSign } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
@@ -51,9 +50,12 @@ export function CustomerCard({ customer }: CustomerCardProps) {
   }
 
   return (
-    <Link href={`/customers/${customer.id}`}>
-      <Card className="hover:shadow-md transition-all duration-200 cursor-pointer">
-        <CardContent className="p-6">
+    <InteractiveCard 
+      clickable 
+      href={`/customers/${customer.id}`}
+      className="p-0"
+    >
+      <div className="p-6">
           {/* Header with Avatar and Basic Info */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3">
@@ -139,8 +141,7 @@ export function CustomerCard({ customer }: CustomerCardProps) {
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
-    </Link>
+        </div>
+    </InteractiveCard>
   )
 }

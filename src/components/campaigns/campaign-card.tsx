@@ -1,6 +1,5 @@
-import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { InteractiveCard } from '@/components/ui/interactive-card'
 import { Campaign } from '@/lib/types'
 import { Mail, MessageSquare, Calendar, Users, TrendingUp, DollarSign } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
@@ -59,33 +58,36 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
   }
 
   return (
-    <Link href={`/campaigns/${campaign.id}`}>
-      <Card className="hover:shadow-md transition-all duration-200 cursor-pointer">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="p-2 bg-primary-50 rounded-lg">
-                {getTypeIcon(campaign.type)}
-              </div>
-              <div>
-                <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-1">
-                  {campaign.name}
-                </CardTitle>
-                <p className="text-sm text-gray-600 mt-1">
-                  {campaign.subject}
-                </p>
-              </div>
+    <InteractiveCard 
+      clickable 
+      href={`/campaigns/${campaign.id}`}
+      className="p-0"
+    >
+      <div className="p-6 pb-3">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-primary-50 rounded-lg">
+              {getTypeIcon(campaign.type)}
             </div>
-            <Badge 
-              variant="outline" 
-              className={getStatusBadgeColor(campaign.status)}
-            >
-              {campaign.status}
-            </Badge>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+                {campaign.name}
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                {campaign.subject}
+              </p>
+            </div>
           </div>
-        </CardHeader>
+          <Badge 
+            variant="outline" 
+            className={getStatusBadgeColor(campaign.status)}
+          >
+            {campaign.status}
+          </Badge>
+        </div>
+      </div>
 
-        <CardContent className="space-y-4">
+      <div className="px-6 pb-6 space-y-4">
           {/* Campaign Info */}
           <div className="flex items-center justify-between text-sm text-gray-600">
             <div className="flex items-center space-x-1">
@@ -171,8 +173,7 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
               )}
             </div>
           )}
-        </CardContent>
-      </Card>
-    </Link>
+        </div>
+    </InteractiveCard>
   )
 }
