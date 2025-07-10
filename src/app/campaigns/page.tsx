@@ -7,8 +7,10 @@ import { Button } from '@/components/ui/button'
 import { fetchCampaigns } from '@/lib/api'
 import { Campaign } from '@/lib/types'
 import { Plus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function CampaignsPage() {
+  const router = useRouter()
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
@@ -77,7 +79,7 @@ export default function CampaignsPage() {
         <h1 className="text-3xl font-bold text-gray-900">
           Campaigns
         </h1>
-        <Button>
+        <Button onClick={() => router.push('/campaigns/create')}>
           <Plus className="h-4 w-4 mr-2" />
           Create Campaign
         </Button>
