@@ -5,6 +5,9 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import Highlight from '@tiptap/extension-highlight'
 import Link from '@tiptap/extension-link'
+import CharacterCount from '@tiptap/extension-character-count'
+import TextStyle from '@tiptap/extension-text-style'
+import Color from '@tiptap/extension-color'
 import { cn } from '@/lib/utils'
 import { 
   Bold, 
@@ -15,7 +18,9 @@ import {
   Undo, 
   Redo,
   Link as LinkIcon,
-  Quote
+  Quote,
+  Smile,
+  Type
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -36,9 +41,30 @@ export function EmailEditor({
     extensions: [
       StarterKit.configure({
         heading: {
-          levels: [1, 2, 3]
-        }
+          levels: [1, 2, 3],
+          HTMLAttributes: {
+            class: 'email-heading',
+          },
+        },
+        bulletList: {
+          HTMLAttributes: {
+            class: 'email-list',
+          },
+        },
+        orderedList: {
+          HTMLAttributes: {
+            class: 'email-list',
+          },
+        },
+        blockquote: {
+          HTMLAttributes: {
+            class: 'email-blockquote',
+          },
+        },
       }),
+      TextStyle,
+      Color,
+      CharacterCount,
       Placeholder.configure({
         placeholder,
       }),
@@ -58,7 +84,7 @@ export function EmailEditor({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-[300px] p-4'
+        class: 'prose prose-sm max-w-none focus:outline-none min-h-[300px] p-4 email-content'
       }
     }
   })
@@ -75,6 +101,12 @@ export function EmailEditor({
   const removeLink = () => {
     editor.chain().focus().unsetLink().run()
   }
+
+  const insertEmoji = (emoji: string) => {
+    editor.chain().focus().insertContent(emoji).run()
+  }
+
+  const commonEmojis = ['😊', '👋', '🎉', '💜', '✨', '🌟', '❤️', '🎯', '💫', '🌸']
 
   return (
     <div className={cn("border rounded-lg overflow-hidden bg-white", className)}>
@@ -168,6 +200,32 @@ export function EmailEditor({
             >
               <LinkIcon className="h-4 w-4" />
             </ToolbarButton>
+          </div>
+
+          {/* Emojis */}
+          <div className="flex gap-1 pr-3 mr-3 border-r border-gray-300">
+            <div className="relative group">
+              <ToolbarButton
+                onClick={() => {}}
+                title="Insert Emoji"
+              >
+                <Smile className="h-4 w-4" />
+              </ToolbarButton>
+              <div className="absolute top-full left-0 mt-1 p-2 bg-white border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                <div className="grid grid-cols-5 gap-1">
+                  {commonEmojis.map((emoji, index) => (
+                    <button
+                      key={index}
+                      onClick={() => insertEmoji(emoji)}
+                      className="p-1 hover:bg-gray-100 rounded text-lg"
+                      title={`Insert ${emoji}`}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Actions */}

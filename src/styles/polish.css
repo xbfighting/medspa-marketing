@@ -213,25 +213,31 @@ button:disabled, a:disabled, .disabled {
   color: #374151;
 }
 
-.email-content h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 16px 0;
-  color: #111827;
+.email-content h1,
+.email-heading[data-level="1"] {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  margin: 16px 0 !important;
+  color: #111827 !important;
+  display: block !important;
 }
 
-.email-content h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 14px 0;
-  color: #111827;
+.email-content h2,
+.email-heading[data-level="2"] {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  margin: 14px 0 !important;
+  color: #111827 !important;
+  display: block !important;
 }
 
-.email-content h3 {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 12px 0;
-  color: #111827;
+.email-content h3,
+.email-heading[data-level="3"] {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 12px 0 !important;
+  color: #111827 !important;
+  display: block !important;
 }
 
 .email-content p {
@@ -247,21 +253,35 @@ button:disabled, a:disabled, .disabled {
   color: #7c3aed;
 }
 
-.email-content ul, .email-content ol {
-  margin: 12px 0;
-  padding-left: 24px;
+.email-content ul, 
+.email-content ol,
+.email-list {
+  margin: 12px 0 !important;
+  padding-left: 24px !important;
+  display: block !important;
 }
 
 .email-content li {
-  margin: 4px 0;
+  margin: 4px 0 !important;
+  display: list-item !important;
 }
 
-.email-content blockquote {
-  border-left: 4px solid #8b5cf6;
-  padding-left: 16px;
-  margin: 16px 0;
-  font-style: italic;
-  color: #6b7280;
+.email-content ul li {
+  list-style-type: disc !important;
+}
+
+.email-content ol li {
+  list-style-type: decimal !important;
+}
+
+.email-content blockquote,
+.email-blockquote {
+  border-left: 4px solid #8b5cf6 !important;
+  padding-left: 16px !important;
+  margin: 16px 0 !important;
+  font-style: italic !important;
+  color: #6b7280 !important;
+  display: block !important;
 }
 
 .email-content strong {

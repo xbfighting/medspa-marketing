@@ -196,30 +196,44 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
       {/* Progress Steps */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
-          {steps.map((step, index) => (
-            <div key={step.number} className="flex items-center flex-1">
-              <div className={`
-                flex items-center justify-center w-10 h-10 rounded-full
-                ${currentStep >= step.number 
-                  ? 'bg-primary-500 text-white' 
-                  : 'bg-gray-200 text-gray-400'}
-              `}>
-                <step.icon className="h-5 w-5" />
-              </div>
-              <div className="ml-2 flex-1">
-                <div className={`text-sm font-medium ${
-                  currentStep >= step.number ? 'text-gray-900' : 'text-gray-400'
-                }`}>
-                  {step.title}
+          {steps.map((step, index) => {
+            const isCompleted = currentStep > step.number
+            const isCurrent = currentStep === step.number
+            const isUpcoming = currentStep < step.number
+            
+            return (
+              <div key={step.number} className="flex items-center flex-1">
+                <div className={`
+                  flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200
+                  ${isCompleted 
+                    ? 'bg-green-500 text-white' 
+                    : isCurrent
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-200 text-gray-400'}
+                `}>
+                  {isCompleted ? (
+                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <step.icon className="h-5 w-5" />
+                  )}
                 </div>
+                <div className="ml-2 flex-1">
+                  <div className={`text-sm font-medium transition-colors duration-200 ${
+                    isCompleted || isCurrent ? 'text-gray-900' : 'text-gray-400'
+                  }`}>
+                    {step.title}
+                  </div>
+                </div>
+                {index < steps.length - 1 && (
+                  <div className={`h-1 flex-1 mx-4 transition-colors duration-200 ${
+                    isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                  }`} />
+                )}
               </div>
-              {index < steps.length - 1 && (
-                <div className={`h-1 flex-1 mx-4 ${
-                  currentStep > step.number ? 'bg-primary-500' : 'bg-gray-200'
-                }`} />
-              )}
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
@@ -431,21 +445,44 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
               <div>
                 <Label>Choose a Template</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                  {AI_TEMPLATES.map(template => (
-                    <div 
-                      key={template.id}
-                      className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                        aiSettings.template === template.id 
-                          ? 'border-primary-500 bg-primary-50' 
-                          : 'hover:border-gray-300'
-                      }`}
-                      onClick={() => setAiSettings({...aiSettings, template: template.id})}
-                    >
-                      <div className="font-medium">{template.name}</div>
-                      <div className="text-sm text-gray-600 mt-1">{template.description}</div>
-                      <Badge variant="secondary" className="mt-2">{template.category}</Badge>
-                    </div>
-                  ))}
+                  {AI_TEMPLATES.map(template => {
+                    const isSelected = aiSettings.template === template.id
+                    return (
+                      <div 
+                        key={template.id}
+                        className={`
+                          relative p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 
+                          hover:shadow-md hover:scale-[1.02] group
+                          ${isSelected 
+                            ? 'border-primary-500 bg-primary-50 shadow-lg ring-2 ring-primary-200' 
+                            : 'border-gray-200 hover:border-primary-300 hover:bg-primary-25 bg-white'
+                          }
+                        `}
+                        onClick={() => setAiSettings({...aiSettings, template: template.id})}
+                      >
+                        {/* Selection indicator */}
+                        {isSelected && (
+                          <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        )}
+                        
+                        <div className={`font-medium transition-colors ${
+                          isSelected ? 'text-primary-700' : 'text-gray-900 group-hover:text-primary-700'
+                        }`}>
+                          {template.name}
+                        </div>
+                        <div className={`text-sm mt-1 transition-colors ${
+                          isSelected ? 'text-primary-600' : 'text-gray-600 group-hover:text-primary-600'
+                        }`}>
+                          {template.description}
+                        </div>
+                        <Badge variant="secondary" className="mt-2">{template.category}</Badge>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
 
