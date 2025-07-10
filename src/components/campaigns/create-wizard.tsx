@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Checkbox } from '@/components/ui/checkbox'
+import { EmailEditor } from './email-editor'
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -532,20 +533,12 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
                   <div>
                     <Label className="text-sm">Content</Label>
                     {campaignDetails.type === 'Email' ? (
-                      <div className="space-y-2">
-                        <div className="prose prose-sm max-w-none p-4 bg-white border rounded-lg" 
-                             dangerouslySetInnerHTML={{ __html: generatedContent.content }} />
-                        <details className="text-sm">
-                          <summary className="cursor-pointer text-gray-600 hover:text-gray-900">
-                            Edit HTML Source
-                          </summary>
-                          <Textarea 
-                            rows={10}
-                            value={generatedContent.content}
-                            onChange={(e) => setGeneratedContent({...generatedContent, content: e.target.value})}
-                            className="font-mono text-xs mt-2"
-                          />
-                        </details>
+                      <div className="mt-2">
+                        <EmailEditor
+                          content={generatedContent.content}
+                          onChange={(content) => setGeneratedContent({...generatedContent, content})}
+                          placeholder="Edit your AI-generated email content..."
+                        />
                       </div>
                     ) : (
                       <Textarea 
