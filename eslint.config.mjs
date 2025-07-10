@@ -18,6 +18,7 @@ const eslintConfig = [
       "@typescript-eslint/prefer-nullish-coalescing": "off",
       "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/strict-boolean-expressions": "off",
+      "react/no-unescaped-entities": "off",
     },
   },
 ];
