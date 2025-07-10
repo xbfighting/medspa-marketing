@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ToastProvider } from "@/components/providers/toast-provider";
+import { GlobalShortcuts } from "@/components/layout/global-shortcuts";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,7 @@ export default function RootLayout({
           </div>
         </div>
         <ToastProvider />
+        <GlobalShortcuts />
       </body>
     </html>
   );

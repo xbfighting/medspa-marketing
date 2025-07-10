@@ -19,6 +19,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Checkbox } from '@/components/ui/checkbox'
 import { EmailEditor } from './email-editor'
 import { EmailPreview } from './email-preview'
+import { AIGenerateButton } from './ai-generate-button'
+import { TypewriterText } from '@/components/ui/typewriter'
+import { EmailEditorWithVariables } from './enhanced-email-editor'
+import { HighlightedContent } from './highlighted-content'
+import { samplePersonalizationData } from '@/lib/personalization'
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -65,6 +70,7 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
     content: '',
     isGenerated: false
   })
+  const [showTypewriter, setShowTypewriter] = useState(false)
 
   const steps = [
     { number: 1, title: 'Select Recipients', icon: Users },
@@ -122,12 +128,18 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
     )
   }
 
-  const handleGenerateContent = () => {
+  const handleGenerateContent = async () => {
     if (!aiSettings.template || selectedCustomers.length === 0) return
 
     // Get first selected customer for personalization example
     const sampleCustomer = customers.find(c => selectedCustomers.includes(c.id))
     if (!sampleCustomer) return
+
+    // Reset typewriter state
+    setShowTypewriter(false)
+
+    // Simulate AI generation delay
+    await new Promise(resolve => setTimeout(resolve, 2000))
 
     const subject = generateSubjectLine(aiSettings.template, sampleCustomer.name, aiSettings.tone)
     const previewText = generatePreviewText(aiSettings.template, aiSettings.tone)
@@ -148,6 +160,9 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
       content,
       isGenerated: true
     })
+
+    // Start typewriter animation
+    setShowTypewriter(true)
   }
 
   const handleComplete = () => {
@@ -533,60 +548,98 @@ export function CreateWizard({ customers, onComplete }: CreateWizardProps) {
 
               {/* Generate Button */}
               <div className="flex justify-center">
-                <Button 
-                  size="lg" 
-                  onClick={handleGenerateContent}
+                <AIGenerateButton 
+                  onGenerate={handleGenerateContent}
                   disabled={!aiSettings.template}
                   className="w-full md:w-auto"
-                >
-                  <Wand2 className="h-4 w-4 mr-2" />
-                  Generate Content with AI
-                </Button>
+                />
               </div>
 
               {/* Generated Content Preview */}
               {generatedContent.isGenerated && (
                 <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-                  <h3 className="font-medium">Generated Content Preview</h3>
-                  
-                  {campaignDetails.type === 'Email' && (
-                    <>
-                      <div>
-                        <Label className="text-sm">Subject Line</Label>
-                        <Input 
-                          value={generatedContent.subject}
-                          onChange={(e) => setGeneratedContent({...generatedContent, subject: e.target.value})}
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-sm">Preview Text</Label>
-                        <Input 
-                          value={generatedContent.previewText}
-                          onChange={(e) => setGeneratedContent({...generatedContent, previewText: e.target.value})}
-                        />
-                      </div>
-                    </>
-                  )}
-                  
-                  <div>
-                    <Label className="text-sm">Content</Label>
-                    {campaignDetails.type === 'Email' ? (
-                      <div className="mt-2">
-                        <EmailEditor
-                          content={generatedContent.content}
-                          onChange={(content) => setGeneratedContent({...generatedContent, content})}
-                          placeholder="Edit your AI-generated email content..."
-                        />
-                      </div>
-                    ) : (
-                      <Textarea 
-                        rows={3}
-                        value={generatedContent.content}
-                        onChange={(e) => setGeneratedContent({...generatedContent, content: e.target.value})}
-                        className="text-sm"
-                      />
-                    )}
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-purple-600" />
+                    <h3 className="font-medium">AI Generated Content</h3>
                   </div>
+                  
+                  {campaignDetails.type === 'Email' ? (
+                    <div className="space-y-4">
+                      {showTypewriter ? (
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="text-sm">Subject Line</Label>
+                            <div className="p-3 bg-white rounded border mt-1">
+                              <TypewriterText
+                                text={generatedContent.subject}
+                                speed={30}
+                                className="text-sm font-medium text-gray-900"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-sm">Preview Text</Label>
+                            <div className="p-3 bg-white rounded border mt-1">
+                              <TypewriterText
+                                text={generatedContent.previewText}
+                                speed={25}
+                                delay={1000}
+                                className="text-sm text-gray-700"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <Label className="text-sm">Email Content</Label>
+                            <div className="p-4 bg-white rounded border min-h-[100px] mt-1">
+                              <TypewriterText
+                                text={generatedContent.content.replace(/<[^>]*>/g, '')}
+                                speed={20}
+                                delay={2000}
+                                className="text-sm text-gray-800 leading-relaxed"
+                                onComplete={() => {
+                                  // After typewriter completes, switch to editable mode
+                                  setTimeout(() => setShowTypewriter(false), 1000)
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <EmailEditorWithVariables
+                          subject={generatedContent.subject}
+                          content={generatedContent.content}
+                          previewText={generatedContent.previewText}
+                          onSubjectChange={(subject) => setGeneratedContent({...generatedContent, subject})}
+                          onContentChange={(content) => setGeneratedContent({...generatedContent, content})}
+                          onPreviewTextChange={(previewText) => setGeneratedContent({...generatedContent, previewText})}
+                          variables={samplePersonalizationData}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <div className="mt-2">
+                      {showTypewriter ? (
+                        <div className="p-3 bg-white rounded border min-h-[80px]">
+                          <TypewriterText
+                            text={generatedContent.content}
+                            speed={30}
+                            delay={500}
+                            className="text-sm text-gray-800"
+                            onComplete={() => {
+                              setTimeout(() => setShowTypewriter(false), 1000)
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <Textarea 
+                          rows={3}
+                          value={generatedContent.content}
+                          onChange={(e) => setGeneratedContent({...generatedContent, content: e.target.value})}
+                          className="text-sm"
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
