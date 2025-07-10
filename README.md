@@ -6,6 +6,13 @@ A modern, AI-powered marketing platform designed specifically for medical aesthe
 ![Next.js](https://img.shields.io/badge/Next.js-15.3.5-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4-38B2AC)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/xbfighting/medspa-marketing)
+
+## 🌐 Live Demo
+
+Visit the live application: **[MedSpa Marketing Platform](https://medspa-marketing.vercel.app)**
+
+> 🚀 Deployed automatically from this repository using Vercel
 
 ## 🎯 Features
 
