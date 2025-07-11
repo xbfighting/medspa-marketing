@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Search, TrendingUp, Clock, Users, Plus } from 'lucide-react'
+import { Search, TrendingUp, Clock, Users } from 'lucide-react'
 import Link from 'next/link'
 import templatesData from '@/data/strategy-templates.json'
 
@@ -33,17 +33,11 @@ export default function TemplatesPage() {
   return (
     <div className="container py-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Strategy Templates</h1>
-          <p className="text-gray-600 mt-2">
-            Proven campaign strategies for medical aesthetics
-          </p>
-        </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Custom
-        </Button>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Strategy Templates</h1>
+        <p className="text-gray-600 mt-2">
+          Proven campaign strategies for medical aesthetics
+        </p>
       </div>
 
       {/* Search */}
@@ -151,7 +145,7 @@ function TemplateCard({ template, featured = false }: { template: any, featured?
         </div>
 
         <Button className="w-full" size="sm" asChild>
-          <Link href={`/campaigns/create?template=${template.id}`}>
+          <Link href="/campaigns/create">
             Use This Strategy
           </Link>
         </Button>
