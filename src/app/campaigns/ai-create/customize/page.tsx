@@ -164,6 +164,18 @@ export default function CustomizePage() {
       return
     }
     sessionStorage.setItem('selected_customers', JSON.stringify(selectedCustomers))
+    
+    // Store customer segment info for content generation
+    const selectedCustomerData = filteredCustomers.filter(c => selectedCustomers.includes(c.id))
+    const lifecycles = [...new Set(selectedCustomerData.map(c => c.lifecycle))]
+    const primaryLifecycle = lifecycles.length === 1 ? lifecycles[0] : 'Mixed'
+    
+    sessionStorage.setItem('customer_segment', JSON.stringify({
+      lifecycle: primaryLifecycle,
+      count: selectedCustomers.length,
+      lifecycles: lifecycles
+    }))
+    
     router.push('/campaigns/ai-create/generate')
   }
 

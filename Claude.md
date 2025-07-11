@@ -144,7 +144,8 @@ The project uses a custom purple theme defined in `tailwind.config.ts`:
    - Performance tracking and analytics
 
 3. **AI-Powered Content**:
-   - Template-based content generation
+   - Claude API integration for intelligent content generation
+   - Template-based content generation with fallback
    - Tone customization (Professional, Friendly, Urgent)
    - Customer-specific personalization
    - Dynamic preview with personalization indicators
@@ -154,6 +155,12 @@ The project uses a custom purple theme defined in `tailwind.config.ts`:
    - Campaign performance metrics
    - Revenue tracking
    - Segmentation analysis
+
+5. **Claude API Integration**:
+   - Goal analysis for AI flow strategy recommendations
+   - Content generation for both Email and SMS campaigns
+   - Automatic fallback to template system when API unavailable
+   - Comprehensive logging of all API calls with cost tracking
 
 ## Key Implementation Details
 

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { logClaudeAPICall, calculateCost } from '@/lib/claude-logger'
 
 interface AnalyzeRequest {
   goal: string
@@ -28,8 +29,11 @@ interface Strategy {
 }
 
 export async function POST(request: Request) {
+  let goal: string = ''
+  
   try {
-    const { goal } = await request.json() as AnalyzeRequest
+    const body = await request.json() as AnalyzeRequest
+    goal = body.goal
 
     // Check if API key is configured
     const apiKey = process.env.CLAUDE_API_KEY
@@ -40,6 +44,7 @@ export async function POST(request: Request) {
     }
 
     // Call Claude API
+    const startTime = Date.now()
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -79,20 +84,68 @@ Keep the response focused on medical spa marketing best practices.`
       })
     })
 
+    const duration = Date.now() - startTime
+
     if (!response.ok) {
       console.error('Claude API error:', response.statusText)
+      
+      // Log failed API call
+      await logClaudeAPICall({
+        timestamp: new Date().toISOString(),
+        endpoint: 'analyze-goal',
+        model: 'claude-3-haiku-20240307',
+        requestData: { goal },
+        error: `API Error: ${response.statusText}`,
+        duration
+      })
+      
       return NextResponse.json(getMockResponse(goal))
     }
 
     const data = await response.json()
     const content = data.content[0].text
     
+    // Extract usage info for logging
+    const usage = data.usage || {}
+    const cost = calculateCost(
+      'claude-3-haiku-20240307',
+      usage.input_tokens || 0,
+      usage.output_tokens || 0
+    )
+
     // Parse Claude's response
     let result
     try {
       result = JSON.parse(content)
+      console.log('Claude response result:', result)
+      
+      // Log successful API call
+      await logClaudeAPICall({
+        timestamp: new Date().toISOString(),
+        endpoint: 'analyze-goal',
+        model: 'claude-3-haiku-20240307',
+        inputTokens: usage.input_tokens,
+        outputTokens: usage.output_tokens,
+        cost,
+        requestData: { goal },
+        responseData: result,
+        duration
+      })
+
     } catch (e) {
       console.error('Failed to parse Claude response:', e)
+      
+      // Log parsing error
+      await logClaudeAPICall({
+        timestamp: new Date().toISOString(),
+        endpoint: 'analyze-goal',
+        model: 'claude-3-haiku-20240307',
+        requestData: { goal },
+        responseData: content,
+        error: 'Failed to parse response',
+        duration
+      })
+      
       return NextResponse.json(getMockResponse(goal))
     }
 

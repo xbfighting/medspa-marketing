@@ -120,6 +120,7 @@ export default function GeneratePage() {
 
   const generateCampaign = async (regenerate = false) => {
     setIsGenerating(true)
+    setError(null)
     
     // Reset step statuses
     setStepStatuses(steps)
@@ -133,8 +134,69 @@ export default function GeneratePage() {
       })))
       setCurrentStep(i)
 
-      // Simulate processing time
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // On the generate step, actually call the API
+      if (i === 1) { // 'generate' step
+        try {
+          // Get strategy details from session
+          const strategyDetails = JSON.parse(sessionStorage.getItem('strategy_details') || '{}')
+          const customerSegment = JSON.parse(sessionStorage.getItem('customer_segment') || '{}')
+          
+          // Call the API
+          const response = await fetch('/api/ai/generate-content', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              campaignType: campaignType.toLowerCase() as 'email' | 'sms',
+              strategy: {
+                id: campaignData?.strategyId || '',
+                name: strategyDetails.name || 'Custom Strategy',
+                description: strategyDetails.description || ''
+              },
+              customization: campaignData?.customization,
+              customerSegment: {
+                lifecycle: customerSegment.lifecycle || 'Mixed',
+                count: campaignData?.customerCount || 0
+              }
+            })
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to generate content')
+          }
+
+          const data = await response.json()
+          
+          // Format the response
+          const content: GeneratedContent = {
+            type: campaignType,
+            subject: data.subject || '',
+            preview: data.preview || '',
+            content: data.content || '',
+            smsContent: campaignType === 'SMS' ? data.content : data.smsContent,
+            cta: {
+              text: 'Book Your Appointment',
+              url: 'https://booking.medspa.com'
+            }
+          }
+
+          setGeneratedContent(content)
+          setEditedContent(content)
+          
+        } catch (err) {
+          console.error('Error generating content:', err)
+          setError('Failed to generate content. Please try again.')
+          
+          // Fallback to mock content
+          const fallbackContent = await generateFallbackContent()
+          setGeneratedContent(fallbackContent)
+          setEditedContent(fallbackContent)
+        }
+      } else {
+        // Simulate processing time for other steps
+        await new Promise(resolve => setTimeout(resolve, 1500))
+      }
 
       // Mark as completed
       setStepStatuses(prev => prev.map((step, index) => ({
@@ -143,7 +205,11 @@ export default function GeneratePage() {
       })))
     }
 
-    // Generate actual content using existing AI template system
+    setIsGenerating(false)
+  }
+
+  const generateFallbackContent = async () => {
+    // Fallback content generation using existing system
     const template = 'seasonal-promotion'
     const tone = (campaignData?.customization?.tone || 'friendly').charAt(0).toUpperCase() + 
                  (campaignData?.customization?.tone || 'friendly').slice(1) as any
@@ -152,7 +218,7 @@ export default function GeneratePage() {
       template,
       tone,
       personalization: {
-        customerName: 'Sarah',
+        customerName: '[FirstName]',
         customFields: {
           discount: campaignData?.customization?.discount || '20%',
           treatments: '<li>Botox - Smooth away wrinkles</li><li>Dermal Fillers - Restore volume</li>',
@@ -162,13 +228,12 @@ export default function GeneratePage() {
       }
     })
 
-    const subject = generateSubjectLine(template, 'Sarah', tone)
+    const subject = generateSubjectLine(template, '[FirstName]', tone)
     const preview = generatePreviewText(template, campaignData?.customization?.discount || '20%')
+    
+    const smsContent = `Hi [FirstName]! 🌟 Exclusive ${campaignData?.customization?.discount || '20%'} off on select treatments this week only! Limited appointments. Book: [link] Reply STOP to opt out.`
 
-    // Generate SMS content
-    const smsContent = `Hi Sarah! 🌟 Exclusive ${campaignData?.customization?.discount || '20%'} off on Botox & Fillers this week only! Limited appointments available. Book now: [link] Reply STOP to opt out.`
-
-    const content: GeneratedContent = {
+    return {
       type: campaignType,
       subject,
       preview,
@@ -179,10 +244,6 @@ export default function GeneratePage() {
         url: 'https://booking.medspa.com'
       }
     }
-
-    setGeneratedContent(content)
-    setEditedContent(content)
-    setIsGenerating(false)
   }
 
   const handleRegenerate = () => {

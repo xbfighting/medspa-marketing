@@ -54,6 +54,7 @@ export default function GeneratePage() {
   const [completedSteps, setCompletedSteps] = useState<number[]>([1, 2, 3])
   const [campaignData, setCampaignData] = useState<any>(null)
   const [isFirstLoad, setIsFirstLoad] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     // Retrieve data from session storage
@@ -97,7 +98,71 @@ export default function GeneratePage() {
 
   const generateCampaignContent = async (template: any, customization: any) => {
     setIsGenerating(true)
+    setError(null)
 
+    try {
+      // Call API to generate content
+      const campaignDetails = JSON.parse(sessionStorage.getItem('campaign_details') || '{}')
+      const selectedCustomers = JSON.parse(sessionStorage.getItem('selected_customers') || '[]')
+      
+      const response = await fetch('/api/ai/generate-content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          campaignType: campaignType.toLowerCase() as 'email' | 'sms',
+          template: {
+            id: template.id,
+            name: template.name,
+            description: template.description
+          },
+          details: {
+            service: campaignDetails.service || template.name,
+            discount: customization?.discount || '20%',
+            validUntil: campaignDetails.validUntil || 'Limited time',
+            bookingWindow: campaignDetails.bookingWindow || 'This week'
+          },
+          customerSegment: {
+            count: selectedCustomers.length
+          }
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate content')
+      }
+
+      const data = await response.json()
+      
+      // Format the response
+      const content: GeneratedContent = {
+        type: campaignType,
+        subject: data.subject || '',
+        preview: data.preview || '',
+        content: data.content || '',
+        smsContent: campaignType === 'SMS' ? data.content : data.smsContent,
+        cta: {
+          text: 'Book Your Appointment',
+          url: 'https://booking.medspa.com'
+        }
+      }
+
+      setGeneratedContent(content)
+      setEditedContent(content)
+      
+    } catch (err) {
+      console.error('Error generating content:', err)
+      setError('Failed to generate content. Using fallback templates.')
+      
+      // Fallback to local generation
+      await generateFallbackContent(template, customization)
+    }
+
+    setIsGenerating(false)
+  }
+
+  const generateFallbackContent = async (template: any, customization: any) => {
     // Simulate generation time
     await new Promise(resolve => setTimeout(resolve, 2000))
 
@@ -140,7 +205,7 @@ export default function GeneratePage() {
       template: aiTemplateId,
       tone,
       personalization: {
-        customerName: 'Sarah',
+        customerName: '[FirstName]',
         customFields: {
           discount: customization?.discount || '20%',
           treatments: '<li>Botox - Smooth away wrinkles</li><li>Dermal Fillers - Restore volume</li>',
@@ -150,11 +215,11 @@ export default function GeneratePage() {
       }
     })
 
-    const subject = generateSubjectLine(aiTemplateId, 'Sarah', tone)
+    const subject = generateSubjectLine(aiTemplateId, '[FirstName]', tone)
     const preview = generatePreviewText(aiTemplateId, customization?.discount || '20%')
 
     // Generate SMS content
-    const smsContent = `Hi Sarah! 🌟 Exclusive ${customization?.discount || '20%'} off on ${template.name}. Limited time offer! Book now: [link] Reply STOP to opt out.`
+    const smsContent = `Hi [FirstName]! 🌟 Exclusive ${customization?.discount || '20%'} off on ${template.name}. Limited time offer! Book now: [link] Reply STOP to opt out.`
 
     const content: GeneratedContent = {
       type: campaignType,
@@ -170,7 +235,6 @@ export default function GeneratePage() {
 
     setGeneratedContent(content)
     setEditedContent(content)
-    setIsGenerating(false)
   }
 
   const handleRegenerate = () => {

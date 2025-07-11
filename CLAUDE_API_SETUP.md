@@ -16,7 +16,7 @@
 3. **配置 API Key**
    打开 `.env.local` 文件，替换示例 key：
    ```
-   CLAUDE_API_KEY=sk-ant-api03-你的实际密钥
+   =sk-ant-api03-你的实际密钥
    ```
 
 4. **重启开发服务器**
@@ -30,7 +30,7 @@
    - 进入你的项目设置
    - 点击 "Settings" → "Environment Variables"
    - 添加新的环境变量：
-     - Name: `CLAUDE_API_KEY`
+     - Name: ``
      - Value: 你的 API key
      - Environment: 选择 Production (也可以选择 Preview 和 Development)
 
@@ -65,3 +65,16 @@
 - 使用的是 Claude 3 Haiku 模型（最经济的选择）
 - 每次分析大约使用 500-1000 tokens
 - 费用约为 $0.00025-$0.0005 per 请求
+
+## API 调用日志
+
+所有 Claude API 调用都会记录在 `/logs/claude-api.log` 文件中，包括：
+- 时间戳
+- API 端点（analyze-goal, generate-content）
+- 使用的模型
+- Token 使用量
+- 估算费用
+- 请求和响应数据
+- 响应时间
+
+注意：`/logs` 目录已添加到 `.gitignore`，不会提交到版本控制

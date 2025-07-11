@@ -85,6 +85,10 @@ export default function StrategiesPage() {
   const handleModalConfirm = (customization: any) => {
     sessionStorage.setItem('selected_strategy', modalStrategy?.id || '')
     sessionStorage.setItem('strategy_customization', JSON.stringify(customization))
+    sessionStorage.setItem('strategy_details', JSON.stringify({
+      name: modalStrategy?.name || '',
+      description: modalStrategy?.description || ''
+    }))
     router.push('/campaigns/ai-create/customize')
   }
 
