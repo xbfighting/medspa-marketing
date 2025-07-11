@@ -390,6 +390,7 @@ export default function GeneratePage() {
                           <EnhancedEmailEditor
                             content={editedContent?.content || ''}
                             onChange={(content) => updateContent('content', content)}
+                            showVariablePanel={false}
                             variables={{
                               customerName: 'Sarah Johnson',
                               discount: campaignData?.customization?.discount || '20%',
