@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
@@ -26,7 +27,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  
+  // Check if current page is login
+  const isLoginPage = pathname === '/login';
 
+  // If login page, render without layout
+  if (isLoginPage) {
+    return (
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {children}
+          <ToastProvider />
+        </body>
+      </html>
+    );
+  }
+
+  // Normal layout with sidebar and header
   return (
     <html lang="en">
       <body

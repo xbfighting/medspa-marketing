@@ -1,5 +1,15 @@
 # Claude API Setup Guide
 
+## 平台访问认证
+
+为了保护 API key 不被滥用，平台现已添加登录认证功能。
+
+### 默认登录凭据
+- 用户名: `admin`
+- 密码: `medspa2024`
+
+**重要**: 请在生产环境中修改这些默认凭据！
+
 ## 本地开发设置
 
 1. **复制环境变量文件**
@@ -26,13 +36,26 @@
 
 ## Vercel 部署设置
 
-1. **在 Vercel Dashboard 中配置**
+1. **在 Vercel Dashboard 中配置所有环境变量**
    - 进入你的项目设置
    - 点击 "Settings" → "Environment Variables"
-   - 添加新的环境变量：
-     - Name: ``
+   - 添加以下环境变量：
+   
+   **Claude API 配置**:
+     - Name: `CLAUDE_API_KEY`
      - Value: 你的 API key
-     - Environment: 选择 Production (也可以选择 Preview 和 Development)
+     
+   **认证配置**:
+     - Name: `AUTH_USERNAME`
+     - Value: 你的用户名（不要使用默认值）
+     
+     - Name: `AUTH_PASSWORD`
+     - Value: 你的密码（不要使用默认值）
+     
+     - Name: `JWT_SECRET`
+     - Value: 一个随机的长字符串（用于加密 session）
+     
+   - Environment: 选择 Production (也可以选择 Preview 和 Development)
 
 2. **重新部署**
    - 环境变量添加后，需要重新部署才能生效

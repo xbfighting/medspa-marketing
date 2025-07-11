@@ -8,9 +8,12 @@ import {
   BarChart3, 
   Settings,
   Sparkles,
-  FileEdit
+  FileEdit,
+  LogOut
 } from 'lucide-react'
 import { NavItem } from './nav-item'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 const navigation = [
   {
@@ -36,6 +39,14 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className }: SidebarProps) {
+  const router = useRouter()
+  
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push('/login')
+    router.refresh()
+  }
+  
   return (
     <div className={cn(
       "flex h-full w-64 flex-col bg-white border-r border-gray-200 shadow-sm",
@@ -66,8 +77,17 @@ export function Sidebar({ className }: SidebarProps) {
         ))}
       </nav>
 
-      {/* Footer */}
-      <div className="px-4 py-4 border-t border-gray-100">
+      {/* Footer with Logout */}
+      <div className="px-4 py-4 border-t border-gray-100 space-y-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleLogout}
+          className="w-full justify-start text-gray-600 hover:text-gray-900"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign Out
+        </Button>
         <div className="text-xs text-gray-500 text-center">
           Powered by AI Marketing
         </div>
