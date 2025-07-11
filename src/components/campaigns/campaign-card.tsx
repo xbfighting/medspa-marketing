@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { InteractiveCard } from '@/components/ui/interactive-card'
 import { Campaign } from '@/lib/types'
-import { Mail, MessageSquare, Calendar, Users, TrendingUp, DollarSign } from 'lucide-react'
+import { Mail, MessageSquare, Calendar, Users, TrendingUp, DollarSign, Sparkles } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
 
 interface CampaignCardProps {
@@ -78,12 +78,20 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
               </p>
             </div>
           </div>
-          <Badge 
-            variant="outline" 
-            className={getStatusBadgeColor(campaign.status)}
-          >
-            {campaign.status}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {campaign.createdWithAI && (
+              <Badge variant="secondary" className="gap-1">
+                <Sparkles className="h-3 w-3" />
+                AI Created
+              </Badge>
+            )}
+            <Badge 
+              variant="outline" 
+              className={getStatusBadgeColor(campaign.status)}
+            >
+              {campaign.status}
+            </Badge>
+          </div>
         </div>
       </div>
 

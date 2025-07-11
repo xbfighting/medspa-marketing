@@ -115,6 +115,7 @@ export interface Campaign {
     enabled: boolean
     fields: string[]
   }
+  createdWithAI?: boolean
 }
 
 export interface Activity {

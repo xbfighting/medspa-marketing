@@ -6,8 +6,9 @@ import { CampaignFilters } from '@/components/campaigns/campaign-filters'
 import { Button } from '@/components/ui/button'
 import { fetchCampaigns } from '@/lib/api'
 import { Campaign } from '@/lib/types'
-import { Plus } from 'lucide-react'
+import { Plus, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { CreateOptionsModal } from '@/components/campaigns/create-options-modal'
 
 export default function CampaignsPage() {
   const router = useRouter()
@@ -17,6 +18,7 @@ export default function CampaignsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
+  const [showCreateOptions, setShowCreateOptions] = useState(false)
 
   useEffect(() => {
     async function loadCampaigns() {
@@ -79,7 +81,7 @@ export default function CampaignsPage() {
         <h1 className="text-3xl font-bold text-gray-900">
           Campaigns
         </h1>
-        <Button onClick={() => router.push('/campaigns/create')}>
+        <Button onClick={() => setShowCreateOptions(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Create Campaign
         </Button>
@@ -114,6 +116,12 @@ export default function CampaignsPage() {
           ))}
         </div>
       )}
+
+      {/* Create Options Modal */}
+      <CreateOptionsModal
+        isOpen={showCreateOptions}
+        onClose={() => setShowCreateOptions(false)}
+      />
     </div>
   )
 }
