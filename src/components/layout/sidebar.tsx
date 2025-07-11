@@ -19,11 +19,6 @@ const navigation = [
     icon: Home,
   },
   {
-    label: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-  },
-  {
     label: 'Campaigns',
     href: '/campaigns',
     icon: Mail,
@@ -32,11 +27,6 @@ const navigation = [
     label: 'Templates',
     href: '/templates',
     icon: Layers,
-  },
-  {
-    label: 'Analytics',
-    href: '/analytics',
-    icon: BarChart3,
   },
 ]
 
