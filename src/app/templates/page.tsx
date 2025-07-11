@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Search, TrendingUp, Clock, Users } from 'lucide-react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import templatesData from '@/data/strategy-templates.json'
 
 export default function TemplatesPage() {
@@ -99,6 +99,30 @@ export default function TemplatesPage() {
 
 // Template Card Component
 function TemplateCard({ template, featured = false }: { template: any, featured?: boolean }) {
+  const router = useRouter()
+
+  const handleUseTemplate = () => {
+    // Clear any existing session data
+    sessionStorage.removeItem('selected_template')
+    sessionStorage.removeItem('template_customization')
+    sessionStorage.removeItem('campaign_basics')
+    sessionStorage.removeItem('selected_customers')
+    sessionStorage.removeItem('generated_content')
+    sessionStorage.removeItem('completed_steps')
+    
+    // Set selected template and default customization
+    sessionStorage.setItem('selected_template', template.id)
+    sessionStorage.setItem('template_customization', JSON.stringify({
+      discount: '20%',
+      urgency: 'medium',
+      tone: 'friendly'
+    }))
+    sessionStorage.setItem('completed_steps', JSON.stringify([1]))
+    
+    // Navigate directly to campaign details
+    router.push('/campaigns/create/details')
+  }
+
   return (
     <Card className={`hover:shadow-lg transition-all cursor-pointer hover:scale-[1.02] ${featured ? 'border-purple-200' : ''}`}>
       <CardHeader>
@@ -144,10 +168,8 @@ function TemplateCard({ template, featured = false }: { template: any, featured?
           )}
         </div>
 
-        <Button className="w-full" size="sm" asChild>
-          <Link href="/campaigns/create">
-            Use This Strategy
-          </Link>
+        <Button className="w-full" size="sm" onClick={handleUseTemplate}>
+          Use This Strategy
         </Button>
       </CardContent>
     </Card>
