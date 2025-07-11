@@ -8,7 +8,6 @@ import {
   BarChart3, 
   Settings,
   Sparkles,
-  Layers,
   FileEdit
 } from 'lucide-react'
 import { NavItem } from './nav-item'
@@ -29,11 +28,6 @@ const navigation = [
     href: '/campaigns',
     icon: Mail,
     exact: true,
-  },
-  {
-    label: 'Templates',
-    href: '/templates',
-    icon: Layers,
   },
 ]
 
