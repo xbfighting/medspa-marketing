@@ -1,173 +1,118 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Users, Mail, TrendingUp, DollarSign } from 'lucide-react'
-import { KPICard } from '@/components/dashboard/kpi-card'
-import { LifecycleChart } from '@/components/dashboard/lifecycle-chart'
-import { CampaignChart } from '@/components/dashboard/campaign-chart'
-import { ActivityFeed } from '@/components/dashboard/activity-feed'
-import { fetchCustomers, fetchCampaigns } from '@/lib/api'
-import { Customer, Campaign } from '@/lib/types'
+import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Card } from '@/components/ui/card'
+import { ArrowRight, Sparkles } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
-export default function Home() {
-  const [customers, setCustomers] = useState<Customer[]>([])
-  const [campaigns, setCampaigns] = useState<Campaign[]>([])
-  const [loading, setLoading] = useState(true)
+export default function HomePage() {
+  const router = useRouter()
+  const [input, setInput] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
 
+  // Pre-fill with example for demo
   useEffect(() => {
-    async function loadData() {
-      try {
-        const [customersData, campaignsData] = await Promise.all([
-          fetchCustomers(),
-          fetchCampaigns()
-        ])
-        setCustomers(customersData)
-        setCampaigns(campaignsData)
-      } catch (error) {
-        console.error('Failed to load dashboard data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadData()
+    setInput("I need to fill empty appointment slots next Tuesday and Wednesday")
   }, [])
 
-  // Calculate KPIs
-  const totalCustomers = customers.length
-  const activeCampaigns = campaigns.filter(c => c.status === 'Active').length
+  const handleSubmit = async () => {
+    if (!input.trim()) return
 
-  const avgOpenRate = campaigns.length > 0
-    ? campaigns.reduce((sum, c) => {
-        const metrics = c.metrics || c.performance
-        if (!metrics) return sum
-        return sum + (metrics.opened / metrics.sent) * 100
-      }, 0) / campaigns.length
-    : 0
-  const totalRevenue = campaigns.reduce((sum, c) => {
-    const metrics = c.metrics || c.performance
-    return sum + (metrics?.revenue || 0)
-  }, 0)
+    setIsProcessing(true)
+    // Store in sessionStorage for next step
+    sessionStorage.setItem('campaign_goal', input)
 
-  // Lifecycle distribution data
-  const lifecycleData = [
-    {
-      name: 'New',
-      value: customers.filter(c => c.lifecycleStage === 'New').length,
-      color: '#9333ea'
-    },
-    {
-      name: 'Active',
-      value: customers.filter(c => c.lifecycleStage === 'Active').length,
-      color: '#059669'
-    },
-    {
-      name: 'At-Risk',
-      value: customers.filter(c => c.lifecycleStage === 'At-Risk').length,
-      color: '#dc2626'
-    },
-    {
-      name: 'Dormant',
-      value: customers.filter(c => c.lifecycleStage === 'Dormant').length,
-      color: '#6b7280'
-    }
-  ]
+    // Simulate processing
+    await new Promise(resolve => setTimeout(resolve, 800))
 
-  // Mock campaign performance data
-  const campaignPerformanceData = [
-    { month: 'Jan', openRate: 22.5, clickRate: 4.2, conversionRate: 1.8 },
-    { month: 'Feb', openRate: 24.1, clickRate: 4.8, conversionRate: 2.1 },
-    { month: 'Mar', openRate: 26.3, clickRate: 5.1, conversionRate: 2.3 },
-    { month: 'Apr', openRate: 25.8, clickRate: 4.9, conversionRate: 2.2 },
-    { month: 'May', openRate: 28.2, clickRate: 5.5, conversionRate: 2.6 },
-    { month: 'Jun', openRate: 27.9, clickRate: 5.3, conversionRate: 2.4 }
-  ]
-
-  // Mock recent activities
-  const recentActivities = [
-    {
-      id: '1',
-      type: 'campaign_sent' as const,
-      title: 'Summer Promotion Campaign Sent',
-      description: 'Campaign sent to 1,234 customers',
-      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
-      entityId: 'camp-1',
-      entityType: 'campaign' as const
-    },
-    {
-      id: '2',
-      type: 'customer_interaction' as const,
-      title: 'New Customer Registration',
-      description: 'Sarah Johnson registered for skincare consultation',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
-      entityId: 'cust-1',
-      entityType: 'customer' as const
-    },
-    {
-      id: '3',
-      type: 'system_event' as const,
-      title: 'Weekly Analytics Report Generated',
-      description: 'Performance metrics updated for all active campaigns',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-      entityId: 'sys-1',
-      entityType: 'campaign' as const
-    }
-  ]
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading dashboard...</div>
-      </div>
-    )
+    // Navigate to AI flow
+    router.push('/campaigns/ai-create/strategies')
   }
 
+  const examples = [
+    "Re-engage customers who haven't visited in 3 months with exclusive offers",
+    "Promote our summer specials to active customers",
+    "Fill appointment slots for next week",
+    "Launch our new laser treatment to women over 35",
+    "Send birthday offers with special discounts"
+  ]
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
-        Dashboard
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white flex flex-col justify-center">
+      <div className="max-w-4xl mx-auto px-4 py-16 w-full">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            Create Smarter Campaigns with AI
+          </h1>
+          <p className="text-xl text-gray-600">
+            Describe your marketing goal in plain English, and let AI create the perfect strategy
+          </p>
+        </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <KPICard
-          title="Total Customers"
-          value={totalCustomers.toLocaleString()}
-          change={12.5}
-          trend="up"
-          icon={Users}
-        />
-        <KPICard
-          title="Active Campaigns"
-          value={activeCampaigns}
-          change={8.2}
-          trend="up"
-          icon={Mail}
-        />
-        <KPICard
-          title="Avg Open Rate"
-          value={`${avgOpenRate.toFixed(1)}%`}
-          change={3.1}
-          trend="up"
-          icon={TrendingUp}
-        />
-        <KPICard
-          title="Monthly Revenue"
-          value={`$${totalRevenue.toLocaleString()}`}
-          change={15.3}
-          trend="up"
-          icon={DollarSign}
-        />
+        {/* Main Input Card */}
+        <Card className="p-8 shadow-xl">
+          <Textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Describe your marketing goal in plain English..."
+            className="min-h-[120px] text-lg resize-none mb-6"
+            autoFocus
+          />
+
+          <Button
+            onClick={handleSubmit}
+            disabled={!input.trim() || isProcessing}
+            className="w-full h-12 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            size="lg"
+          >
+            {isProcessing ? (
+              <span className="animate-pulse">Processing your request...</span>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-5 w-5" />
+                Create Campaign with AI
+              </>
+            )}
+          </Button>
+        </Card>
+
+        {/* Examples */}
+        <div className="mt-8">
+          <p className="text-sm text-gray-600 mb-3">Try these examples:</p>
+          <div className="space-y-2">
+            {examples.map((example, i) => (
+              <button
+                key={i}
+                onClick={() => setInput(example)}
+                className="block w-full text-left p-3 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+              >
+                • {example}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Alternative Path */}
+        <div className="mt-12 text-center">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex-1 h-px bg-gray-300" />
+            <span className="text-gray-500 px-4">or</span>
+            <div className="flex-1 h-px bg-gray-300" />
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={() => router.push('/templates')}
+            size="lg"
+          >
+            Browse Strategy Templates
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <LifecycleChart data={lifecycleData} />
-        <CampaignChart data={campaignPerformanceData} />
-      </div>
-
-      {/* Activity Feed */}
-      <ActivityFeed activities={recentActivities} />
     </div>
   )
 }

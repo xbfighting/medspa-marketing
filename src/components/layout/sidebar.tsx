@@ -6,20 +6,22 @@ import {
   Users, 
   Mail, 
   BarChart3, 
-  Settings 
+  Settings,
+  Home,
+  Layers
 } from 'lucide-react'
 import { NavItem } from './nav-item'
 
 const navigation = [
   {
-    label: 'Dashboard',
+    label: 'Home',
     href: '/',
-    icon: LayoutDashboard,
+    icon: Home,
   },
   {
-    label: 'Customers',
-    href: '/customers',
-    icon: Users,
+    label: 'Dashboard',
+    href: '/dashboard',
+    icon: LayoutDashboard,
   },
   {
     label: 'Campaigns',
@@ -27,14 +29,14 @@ const navigation = [
     icon: Mail,
   },
   {
+    label: 'Templates',
+    href: '/templates',
+    icon: Layers,
+  },
+  {
     label: 'Analytics',
     href: '/analytics',
     icon: BarChart3,
-  },
-  {
-    label: 'Settings',
-    href: '/settings',
-    icon: Settings,
   },
 ]
 
