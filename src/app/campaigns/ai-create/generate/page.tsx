@@ -5,8 +5,28 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Sparkles, CheckCircle, Loader2, Mail, MessageSquare, ArrowRight, Users } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { 
+  Sparkles, 
+  CheckCircle, 
+  Loader2, 
+  Mail, 
+  MessageSquare, 
+  ArrowRight, 
+  Users, 
+  RefreshCw,
+  Edit3,
+  Eye,
+  Copy,
+  Check
+} from 'lucide-react'
 import { generateContent, generateSubjectLine, generatePreviewText } from '@/lib/ai-templates'
+import { EnhancedEmailEditor } from '@/components/campaigns/enhanced-email-editor'
+import { EmailPreview } from '@/components/campaigns/email-preview'
+import { cn } from '@/lib/utils'
 
 interface GenerationStep {
   id: string
@@ -14,11 +34,28 @@ interface GenerationStep {
   status: 'pending' | 'processing' | 'completed'
 }
 
+interface GeneratedContent {
+  type: 'Email' | 'SMS'
+  subject: string
+  preview: string
+  content: string
+  smsContent?: string
+  cta: {
+    text: string
+    url: string
+  }
+}
+
 export default function GeneratePage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
-  const [generatedContent, setGeneratedContent] = useState<any>(null)
+  const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null)
   const [campaignData, setCampaignData] = useState<any>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [viewMode, setViewMode] = useState<'edit' | 'preview'>('preview')
+  const [campaignType, setCampaignType] = useState<'Email' | 'SMS'>('Email')
+  const [editedContent, setEditedContent] = useState<GeneratedContent | null>(null)
+  const [copiedToClipboard, setCopiedToClipboard] = useState(false)
   
   const steps: GenerationStep[] = [
     { id: 'analyze', label: 'Analyzing strategy and customers', status: 'pending' },
@@ -54,7 +91,12 @@ export default function GeneratePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
-  const generateCampaign = async () => {
+  const generateCampaign = async (regenerate = false) => {
+    setIsGenerating(true)
+    
+    // Reset step statuses
+    setStepStatuses(steps)
+    
     // Simulate step-by-step generation
     for (let i = 0; i < steps.length; i++) {
       // Update current step to processing
@@ -76,16 +118,17 @@ export default function GeneratePage() {
 
     // Generate actual content using existing AI template system
     const template = 'seasonal-promotion'
-    const tone = (campaignData?.customization?.tone || 'friendly').charAt(0).toUpperCase() + (campaignData?.customization?.tone || 'friendly').slice(1) as any
+    const tone = (campaignData?.customization?.tone || 'friendly').charAt(0).toUpperCase() + 
+                 (campaignData?.customization?.tone || 'friendly').slice(1) as any
     
-    const body = generateContent({
+    const emailBody = generateContent({
       template,
       tone,
       personalization: {
         customerName: 'Sarah',
         customFields: {
           discount: campaignData?.customization?.discount || '20%',
-          treatments: '<li>Botox</li><li>Dermal Fillers</li>',
+          treatments: '<li>Botox - Smooth away wrinkles</li><li>Dermal Fillers - Restore volume</li>',
           season: 'Special',
           bookingDeadline: 'This Week'
         }
@@ -95,32 +138,57 @@ export default function GeneratePage() {
     const subject = generateSubjectLine(template, 'Sarah', tone)
     const preview = generatePreviewText(template, campaignData?.customization?.discount || '20%')
 
-    setGeneratedContent({
-      type: 'Email',
+    // Generate SMS content
+    const smsContent = `Hi Sarah! 🌟 Exclusive ${campaignData?.customization?.discount || '20%'} off on Botox & Fillers this week only! Limited appointments available. Book now: [link] Reply STOP to opt out.`
+
+    const content: GeneratedContent = {
+      type: campaignType,
       subject,
       preview,
-      content: body,
+      content: emailBody,
+      smsContent,
       cta: {
         text: 'Book Your Appointment',
         url: 'https://booking.medspa.com'
       }
-    })
+    }
+
+    setGeneratedContent(content)
+    setEditedContent(content)
+    setIsGenerating(false)
+  }
+
+  const handleRegenerate = () => {
+    generateCampaign(true)
+  }
+
+  const handleCopyContent = () => {
+    const textToCopy = campaignType === 'Email' 
+      ? editedContent?.content || generatedContent?.content || ''
+      : editedContent?.smsContent || generatedContent?.smsContent || ''
+    
+    navigator.clipboard.writeText(textToCopy)
+    setCopiedToClipboard(true)
+    setTimeout(() => setCopiedToClipboard(false), 2000)
   }
 
   const handleCreateCampaign = async () => {
+    const finalContent = editedContent || generatedContent
+    if (!finalContent) return
+
     // Create campaign object
     const newCampaign = {
       name: `AI Campaign - ${campaignData.goal.slice(0, 30)}...`,
-      type: 'Email',
+      type: campaignType,
       status: 'Scheduled',
-      subject: generatedContent.subject,
-      previewText: generatedContent.preview,
-      content: generatedContent.content,
-      ctaText: generatedContent.cta.text,
-      ctaUrl: generatedContent.cta.url,
+      subject: finalContent.subject,
+      previewText: finalContent.preview,
+      content: campaignType === 'Email' ? finalContent.content : finalContent.smsContent,
+      ctaText: finalContent.cta.text,
+      ctaUrl: finalContent.cta.url,
       targetCustomerIds: campaignData.customerIds,
       createdWithAI: true,
-      scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+      scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       performance: {
         sent: 0,
         delivered: 0,
@@ -132,7 +200,6 @@ export default function GeneratePage() {
     }
 
     // In a real app, this would save to the backend
-    // For now, we'll just redirect to campaigns page
     sessionStorage.setItem('new_campaign', JSON.stringify(newCampaign))
     
     // Clear session data
@@ -145,6 +212,14 @@ export default function GeneratePage() {
     router.push('/campaigns')
   }
 
+  const updateContent = (field: keyof GeneratedContent, value: string) => {
+    if (!editedContent) return
+    setEditedContent({
+      ...editedContent,
+      [field]: value
+    })
+  }
+
   if (!campaignData) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -154,7 +229,7 @@ export default function GeneratePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
@@ -166,91 +241,282 @@ export default function GeneratePage() {
         </p>
       </div>
 
-      {/* Progress Steps */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Generation Progress</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {stepStatuses.map((step, index) => (
-              <div key={step.id} className="flex items-center gap-4">
-                <div className="relative">
-                  {step.status === 'completed' ? (
-                    <CheckCircle className="h-6 w-6 text-green-500" />
-                  ) : step.status === 'processing' ? (
-                    <Loader2 className="h-6 w-6 text-purple-600 animate-spin" />
-                  ) : (
-                    <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
-                  )}
-                </div>
-                <span className={`text-sm ${
-                  step.status === 'completed' ? 'text-gray-900 font-medium' :
-                  step.status === 'processing' ? 'text-purple-600 font-medium' :
-                  'text-gray-400'
-                }`}>
-                  {step.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Generated Content Preview */}
-      {generatedContent && (
-        <Card className="border-purple-200">
+      {/* Progress Steps - Only show while generating */}
+      {isGenerating && (
+        <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Generated Campaign</CardTitle>
-              <Badge variant="secondary">
-                <Mail className="h-3 w-3 mr-1" />
-                Email Campaign
-              </Badge>
-            </div>
+            <CardTitle className="text-lg">Generation Progress</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Subject Line</p>
-              <p className="font-medium">{generatedContent.subject}</p>
-            </div>
-            
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Preview Text</p>
-              <p className="text-gray-700">{generatedContent.preview}</p>
-            </div>
-
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-2">Content Preview</p>
-              <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 line-clamp-4">
-                {generatedContent.content}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between pt-4 border-t">
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <span className="flex items-center gap-1">
-                  <Users className="h-4 w-4" />
-                  {campaignData.customerCount} recipients
-                </span>
-                <span className="flex items-center gap-1">
-                  <MessageSquare className="h-4 w-4" />
-                  Personalized content
-                </span>
-              </div>
+          <CardContent>
+            <div className="space-y-4">
+              {stepStatuses.map((step, index) => (
+                <div key={step.id} className="flex items-center gap-4">
+                  <div className="relative">
+                    {step.status === 'completed' ? (
+                      <CheckCircle className="h-6 w-6 text-green-500" />
+                    ) : step.status === 'processing' ? (
+                      <Loader2 className="h-6 w-6 text-purple-600 animate-spin" />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                    )}
+                  </div>
+                  <span className={cn(
+                    "text-sm",
+                    step.status === 'completed' && "text-gray-900 font-medium",
+                    step.status === 'processing' && "text-purple-600 font-medium",
+                    step.status === 'pending' && "text-gray-400"
+                  )}>
+                    {step.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
       )}
 
+      {/* Content Editor/Preview */}
+      {generatedContent && !isGenerating && (
+        <div className="space-y-6">
+          {/* Campaign Type Selector */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center justify-between">
+                <span>Campaign Type</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRegenerate}
+                  disabled={isGenerating}
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Regenerate
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RadioGroup
+                value={campaignType}
+                onValueChange={(value) => setCampaignType(value as 'Email' | 'SMS')}
+              >
+                <div className="flex gap-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <RadioGroupItem value="Email" />
+                    <span className="flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      Email Campaign
+                    </span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <RadioGroupItem value="SMS" />
+                    <span className="flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      SMS Campaign
+                    </span>
+                  </label>
+                </div>
+              </RadioGroup>
+            </CardContent>
+          </Card>
+
+          {/* Content Editor/Preview Tabs */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Campaign Content</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopyContent}
+                  >
+                    {copiedToClipboard ? (
+                      <>
+                        <Check className="h-4 w-4 mr-2 text-green-600" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'edit' | 'preview')}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="edit" className="flex items-center gap-2">
+                    <Edit3 className="h-4 w-4" />
+                    Edit
+                  </TabsTrigger>
+                  <TabsTrigger value="preview" className="flex items-center gap-2">
+                    <Eye className="h-4 w-4" />
+                    Preview
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="edit" className="space-y-4 mt-4">
+                  {campaignType === 'Email' ? (
+                    <>
+                      {/* Email Subject */}
+                      <div>
+                        <Label htmlFor="subject">Subject Line</Label>
+                        <Input
+                          id="subject"
+                          value={editedContent?.subject || ''}
+                          onChange={(e) => updateContent('subject', e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+
+                      {/* Email Preview Text */}
+                      <div>
+                        <Label htmlFor="preview">Preview Text</Label>
+                        <Input
+                          id="preview"
+                          value={editedContent?.preview || ''}
+                          onChange={(e) => updateContent('preview', e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+
+                      {/* Email Body Editor */}
+                      <div>
+                        <Label>Email Content</Label>
+                        <div className="mt-1">
+                          <EnhancedEmailEditor
+                            content={editedContent?.content || ''}
+                            onChange={(content) => updateContent('content', content)}
+                            variables={{
+                              customerName: 'Sarah Johnson',
+                              discount: campaignData?.customization?.discount || '20%',
+                              treatments: 'Botox & Dermal Fillers',
+                              bookingDeadline: 'This Week'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* SMS Content */}
+                      <div>
+                        <Label htmlFor="sms-content">SMS Message</Label>
+                        <textarea
+                          id="sms-content"
+                          value={editedContent?.smsContent || ''}
+                          onChange={(e) => updateContent('smsContent', e.target.value)}
+                          className="mt-1 w-full min-h-[120px] p-3 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          maxLength={160}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {(editedContent?.smsContent || '').length}/160 characters
+                        </p>
+                      </div>
+                    </>
+                  )}
+
+                  {/* CTA Settings */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="cta-text">Button Text</Label>
+                      <Input
+                        id="cta-text"
+                        value={editedContent?.cta.text || ''}
+                        onChange={(e) => setEditedContent(prev => prev ? {
+                          ...prev,
+                          cta: { ...prev.cta, text: e.target.value }
+                        } : null)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cta-url">Button URL</Label>
+                      <Input
+                        id="cta-url"
+                        value={editedContent?.cta.url || ''}
+                        onChange={(e) => setEditedContent(prev => prev ? {
+                          ...prev,
+                          cta: { ...prev.cta, url: e.target.value }
+                        } : null)}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="preview" className="mt-4">
+                  {campaignType === 'Email' ? (
+                    <EmailPreview
+                      subject={editedContent?.subject || ''}
+                      previewText={editedContent?.preview || ''}
+                      content={editedContent?.content || ''}
+                    />
+                  ) : (
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <div className="max-w-sm mx-auto">
+                        <div className="bg-white rounded-lg shadow-sm border p-4">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                              <MessageSquare className="h-5 w-5 text-purple-600" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 mb-1">MedSpa</p>
+                              <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                                {editedContent?.smsContent}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-2">
+                                Delivered • Now
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+
+          {/* Campaign Info */}
+          <Card className="border-purple-200 bg-purple-50/30">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-6 text-sm text-gray-600">
+                  <span className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    {campaignData.customerCount} recipients
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    AI-personalized content
+                  </span>
+                  <Badge variant="secondary">
+                    {campaignData.customization?.tone || 'Friendly'} tone
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Action Buttons */}
-      {generatedContent && (
-        <div className="flex justify-between">
+      {generatedContent && !isGenerating && (
+        <div className="flex justify-between items-center">
           <Button variant="outline" onClick={() => router.back()}>
             Back
           </Button>
           <div className="flex gap-3">
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={() => setViewMode('edit')}
+              disabled={viewMode === 'edit'}
+            >
               Customize Further
             </Button>
             <Button onClick={handleCreateCampaign}>
