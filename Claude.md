@@ -1,27 +1,33 @@
-# MedSpa AI Marketing Platform - Fresh Start
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+# MedSpa AI Marketing Platform
 
 ## Project Overview
 
-Create a brand new Next.js application showcasing an AI-driven personalized marketing platform for medical aesthetics clinics. Start from scratch with clean architecture and modern best practices.
+An AI-driven personalized marketing platform for medical aesthetics clinics built with Next.js 15, TypeScript, and modern web technologies. The platform enables clinics to manage customers, create AI-powered campaigns, and analyze performance metrics.
 
-## Initial Setup
+## Development Commands
 
 ```bash
-# Create new Next.js project
-npx create-next-app@latest medspa-marketing --typescript --tailwind --app --src-dir=false --import-alias="@/*"
+# Install dependencies
+npm install
 
-cd medspa-marketing
+# Run development server (with Turbopack)
+npm run dev
 
-# Install essential dependencies
-npm install @radix-ui/react-avatar @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-label @radix-ui/react-select @radix-ui/react-slot @radix-ui/react-tabs @radix-ui/react-toast
-npm install class-variance-authority clsx tailwind-merge lucide-react
-npm install @tanstack/react-query recharts date-fns
+# Build for production
+npm run build
 
-# Initialize shadcn/ui
-npx shadcn@latest init -d
+# Start production server
+npm start
 
-# Add shadcn components we'll need
-npx shadcn@latest add button card input label select tabs toast avatar dropdown-menu badge skeleton table dialog
+# Run linting
+npm run lint
+
+# Deploy to Vercel
+npm run vercel-build
 ```
 
 ## Project Structure
@@ -87,309 +93,67 @@ medspa-marketing/
 │   └── use-campaigns.ts          # Campaign data hooks
 ├── data/
 │   ├── customers.json            # Customer sample data
-│   └── c            # Campaign sample data
+│   └── campaigns.json            # Campaign sample data
 └── public/
     └── [assets]
 
 ```
 
-### TIPS
-
-- You can copy customers.json and customers.json from /data/*ptah;
-- You can refer to the following UI/UX design: <https://claude.ai/public/artifacts/f7bca104-9ea5-4300-9c51-6fd8cb6a5128>
-
-## Development Milestones
-
-### Milestone 1: Project Foundation (Start Here!)
-
-**Goal**: Set up clean Next.js project with basic layout
-
-**Steps**:
-
-1. Run setup commands above
-2. Clean up default Next.js content
-3. Create basic layout structure
-4. Add purple theme colors to tailwind.config.ts:
-
-```javascript
-theme: {
-  extend: {
-    colors: {
-      primary: {
-        50: '#faf5ff',
-        500: '#9333ea',
-        600: '#7c3aed',
-        700: '#6d28d9',
-      }
-    }
-  }
-}
-```
-
-**Create core types** (`lib/types.ts`):
-
-```typescript
-export interface Customer {
-  id: string
-  name: string
-  email: string
-  phone: string
-  lifecycleStage: 'New' | 'Active' | 'At-Risk' | 'Dormant'
-  customerValue: number
-  lastInteraction: string
-  // ... rest as defined earlier
-}
-
-export interface Campaign {
-  id: string
-  name: string
-  type: 'Email' | 'SMS'
-  status: 'Active' | 'Scheduled' | 'Completed'
-  // ... rest as defined earlier
-}
-```
-
-**Verification**:
-
-- `npm run dev` works
-- Basic page routes load
-- No TypeScript errors
-
-**Commit**: "feat: initialize project with basic structure"
-
-### Milestone 2: Navigation Layout
-
-**Goal**: Implement sidebar navigation and responsive layout
-
-**Create Sidebar** (`components/layout/sidebar.tsx`):
-
-- Logo/Brand at top
-- Navigation items with Lucide icons:
-  - Dashboard (LayoutDashboard)
-  - Customers (Users)
-  - Campaigns (Mail)
-  - Analytics (BarChart3)
-  - Settings (Settings)
-- Active state highlighting
-- Collapsible on mobile
-
-**Create Header** (`components/layout/header.tsx`):
-
-- Search bar
-- User profile dropdown
-- Mobile menu toggle
-
-**Update Root Layout** (`app/layout.tsx`):
-
-- Integrate Sidebar and Header
-- Responsive flex layout
-- Proper spacing
-
-**Verification**:
-
-- Navigation works on all screen sizes
-- Active states display correctly
-- Clean responsive behavior
-
-**Commit**: "feat: add navigation layout with sidebar"
-
-### Milestone 3: Dashboard Page
-
-**Goal**: Create home dashboard with KPIs and charts
-
-**KPI Cards**:
-
-- Total Customers
-- Active Campaigns
-- Avg Open Rate
-- Monthly Revenue
-
-**Charts**:
-
-- Customer Lifecycle Distribution (Pie)
-- Campaign Performance Trend (Line)
-
-**Activity Feed**:
-
-- Recent customer interactions
-- Campaign launches
-- System events
-
-**Add sample data** (`data/` directory):
-
-- Copy the generated customers.json
-- Copy the generated campaigns.json
-
-**Create API routes** to serve data:
-
-```typescript
-// app/api/customers/route.ts
-import customers from '@/data/customers.json'
-
-export async function GET() {
-  return Response.json(customers)
-}
-```
-
-**Verification**:
-
-- Dashboard displays all widgets
-- Charts render with data
-- Responsive grid layout
-
-**Commit**: "feat: implement dashboard with KPIs and charts"
-
-### Milestone 4: Customer Management
-
-**Goal**: Build customer list and detail pages
-
-**Customer List** (`app/customers/page.tsx`):
-
-- Search bar (name, email)
-- Filter chips (lifecycle stage, loyalty tier)
-- Customer cards in grid
-- Pagination
-
-**Customer Detail** (`app/customers/[id]/page.tsx`):
-
-- Customer header info
-- Purchase history timeline
-- Interaction log
-- Recommended actions
-- Quick action buttons
-
-**Components**:
-
-- CustomerCard with hover effects
-- CustomerFilters with state management
-- CustomerTimeline for history
-
-**Verification**:
-
-- Search and filters work
-- Detail page loads correctly
-- Data displays accurately
-
-**Commit**: "feat: add customer list and detail pages"
-
-### Milestone 5: Campaign List & Details
-
-**Goal**: Display campaigns with performance metrics
-
-**Campaign List** (`app/campaigns/page.tsx`):
-
-- Campaign cards with metrics
-- Status badges (Active/Scheduled/Completed)
-- Type icons (Email/SMS)
-- Performance indicators
-
-**Campaign Detail** (`app/campaigns/[id]/page.tsx`):
-
-- Campaign overview
-- Target audience
-- Content preview
-- Performance metrics
-- A/B test results (if applicable)
-
-**Verification**:
-
-- All campaigns display
-- Metrics are accurate
-- Status filtering works
-
-**Commit**: "feat: implement campaign management pages"
-
-### Milestone 6: Create Campaign Wizard (Core Feature!)
-
-**Goal**: Multi-step campaign creation with AI generation
-
-**Step Components**:
-
-1. **Select Recipients**: Customer selection/filtering
-2. **Campaign Details**: Name, type, schedule
-3. **AI Generation**: Template + tone selection + generate button
-4. **Review & Send**: Preview and confirmation
-
-**AI Generation Logic** (`lib/ai-templates.ts`):
-
-```typescript
-export function generateContent(
-  customers: Customer[],
-  template: string,
-  tone: 'Professional' | 'Friendly' | 'Urgent'
-) {
-  // Smart template replacement
-  // Tone modifiers
-  // Personalization logic
-}
-```
-
-**State Management**:
-
-- Use React Context or component state
-- Preserve data between steps
-- Allow back navigation
-
-**Verification**:
-
-- All steps flow smoothly
-- AI generation produces varied content
-- Preview shows personalization
-
-**Commit**: "feat: add campaign creation wizard with AI generation"
-
-### Milestone 7: Analytics Page
-
-**Goal**: Comprehensive analytics dashboard
-
-**Sections**:
-
-- Performance Overview (date range selector)
-- Customer Analytics (segments, LTV)
-- Campaign Analytics (by type, by segment)
-- Revenue Trends
-
-**Charts**:
-
-- Use Recharts for all visualizations
-- Interactive tooltips
-- Consistent color scheme
-
-**Verification**:
-
-- All charts render correctly
-- Data aggregations are accurate
-- Responsive layout
-
-**Commit**: "feat: implement analytics dashboard"
-
-### Milestone 8: Polish & Enhancements
-
-**Goal**: Add professional touches
-
-**Features**:
-
-- Loading states (skeletons)
-- Empty states with illustrations
-- Error boundaries
-- Toast notifications
-- Smooth transitions
-- Print-friendly reports
-- Onboarding tour
-
-**Performance**:
-
-- Implement React Query for caching
-- Add optimistic updates
-- Lazy load heavy components
-
-**Verification**:
-
-- Smooth user experience
-- No console errors
-- Fast perceived performance
-
-**Commit**: "feat: add polish and UX enhancements"
+## High-Level Architecture
+
+### Tech Stack
+- **Framework**: Next.js 15.3.5 with App Router
+- **Language**: TypeScript 5.0
+- **Styling**: Tailwind CSS v4 with custom purple theme
+- **UI Components**: shadcn/ui (Radix UI primitives)
+- **State Management**: React Query for server state
+- **Data Visualization**: Recharts
+- **Animations**: Framer Motion, tailwindcss-animate
+- **Rich Text**: Tiptap editor
+
+### Key Architectural Patterns
+
+1. **Route Groups**: Using `(dashboard)` for grouped layout without affecting URL structure
+2. **API Routes**: RESTful endpoints in `/app/api` returning JSON data from `/data` files
+3. **Component Organization**:
+   - Base UI components in `/components/ui` (shadcn/ui)
+   - Feature components organized by domain (dashboard, customers, campaigns, analytics)
+   - Shared layout components for navigation
+4. **Type Safety**: All major data structures defined in `/lib/types.ts`
+5. **Data Fetching**: React Query hooks in `/hooks` for caching and synchronization
+6. **AI Content Generation**: Template-based system in `/lib/ai-templates.ts`
+
+### Purple Theme Configuration
+
+The project uses a custom purple theme defined in `tailwind.config.ts`:
+- Primary colors: `#9333ea` (500), `#7c3aed` (600), `#6d28d9` (700)
+- CSS variables for theme colors (--primary, --background, etc.)
+- Consistent use of `primary` color throughout components
+
+### Key Features
+
+1. **Customer Management**: 
+   - Lifecycle stages (New, Active, At-Risk, Dormant)
+   - Loyalty tiers (Bronze, Silver, Gold, Platinum)
+   - Purchase history and interaction tracking
+
+2. **Campaign System**:
+   - Multi-step creation wizard with AI content generation
+   - Email and SMS campaign types
+   - A/B testing capabilities
+   - Performance tracking and analytics
+
+3. **AI-Powered Content**:
+   - Template-based content generation
+   - Tone customization (Professional, Friendly, Urgent)
+   - Customer-specific personalization
+   - Dynamic preview with personalization indicators
+
+4. **Analytics Dashboard**:
+   - Customer lifecycle distribution
+   - Campaign performance metrics
+   - Revenue tracking
+   - Segmentation analysis
 
 ## Key Implementation Details
 
@@ -448,28 +212,28 @@ After each milestone:
 4. Verify no console errors
 5. Commit with descriptive message
 
-## Common Issues & Solutions
+## Common Development Tasks
 
-**Issue**: Module not found errors
-**Solution**: Check import paths, use `@/` alias
+### Adding a New Component
+1. Check existing components in `/components` for similar patterns
+2. Use shadcn/ui components as base when applicable
+3. Follow the established TypeScript interface patterns from `/lib/types.ts`
+4. Apply consistent styling with Tailwind classes
 
-**Issue**: Hydration errors
-**Solution**: Ensure client components marked with 'use client'
+### Working with Data
+- Customer data: `/data/customers.json` with 100 sample records
+- Campaign data: `/data/campaigns.json` with 20 sample campaigns
+- API routes already configured to serve this data
+- Use React Query hooks from `/hooks` for data fetching
 
-**Issue**: Type errors
-**Solution**: Define interfaces properly in types.ts
+### Modifying the AI Content Generation
+- Core logic in `/lib/ai-templates.ts`
+- Templates support customer personalization tokens
+- Tone modifiers adjust language style
+- Preview component shows personalization in real-time
 
-**Issue**: API not working
-**Solution**: Check route.ts naming and exports
-
-## Final Checklist
-
-- [ ] All pages load without errors
-- [ ] Navigation works correctly
-- [ ] Data displays properly
-- [ ] AI generation creates varied content
-- [ ] Responsive on all devices
-- [ ] Performance is smooth
-- [ ] Code is well-organized
-- [ ] Types are properly defined
-- [ ] Build succeeds without warnings
+### Adding New Routes
+1. Create route in `/app` directory following Next.js App Router conventions
+2. Use route groups like `(dashboard)` for shared layouts
+3. API routes go in `/app/api` and should return JSON responses
+4. Follow the error handling pattern shown in existing API routes
