@@ -17,9 +17,13 @@ interface ClaudeAPILog {
 const LOG_DIR = path.join(process.cwd(), 'logs')
 const LOG_FILE = path.join(LOG_DIR, 'claude-api.log')
 
-// Ensure log directory exists
-if (!fs.existsSync(LOG_DIR)) {
-  fs.mkdirSync(LOG_DIR, { recursive: true })
+// Try to ensure log directory exists (but don't fail if we can't)
+try {
+  if (!fs.existsSync(LOG_DIR)) {
+    fs.mkdirSync(LOG_DIR, { recursive: true })
+  }
+} catch (error) {
+  console.warn('Unable to create log directory:', error)
 }
 
 export async function logClaudeAPICall(log: ClaudeAPILog) {

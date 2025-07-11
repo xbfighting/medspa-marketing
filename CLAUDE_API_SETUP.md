@@ -61,6 +61,16 @@
    - 环境变量添加后，需要重新部署才能生效
    - 可以在 Vercel Dashboard 点击 "Redeploy"
 
+## 禁用 Claude API
+
+如果你在生产环境中遇到 API 问题，可以通过设置环境变量来禁用 Claude API：
+
+```
+ENABLE_CLAUDE_API=false
+```
+
+系统会自动使用内置的智能模板系统，确保功能正常运行。
+
 ## 安全说明
 
 - ✅ API key 只在服务器端使用，不会暴露给客户端

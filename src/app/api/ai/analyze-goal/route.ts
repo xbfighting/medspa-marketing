@@ -35,11 +35,13 @@ export async function POST(request: Request) {
     const body = await request.json() as AnalyzeRequest
     goal = body.goal
 
-    // Check if API key is configured
+    // Check if Claude API is enabled
+    const enableClaudeAPI = process.env.ENABLE_CLAUDE_API !== 'false'
     const apiKey = process.env.CLAUDE_API_KEY
-    if (!apiKey) {
-      console.error('CLAUDE_API_KEY not configured')
-      // Fallback to mock data if no API key
+    
+    // Skip API call if disabled or no key
+    if (!enableClaudeAPI || !apiKey) {
+      console.log('Claude API disabled or not configured, using mock response')
       return NextResponse.json(getMockResponse(goal))
     }
 
@@ -87,17 +89,21 @@ Keep the response focused on medical spa marketing best practices.`
     const duration = Date.now() - startTime
 
     if (!response.ok) {
-      console.error('Claude API error:', response.statusText)
+      console.error('Claude API error:', response.status, response.statusText)
       
-      // Log failed API call
-      await logClaudeAPICall({
-        timestamp: new Date().toISOString(),
-        endpoint: 'analyze-goal',
-        model: 'claude-3-haiku-20240307',
-        requestData: { goal },
-        error: `API Error: ${response.statusText}`,
-        duration
-      })
+      // Try to log the error (but don't fail if logging fails)
+      try {
+        await logClaudeAPICall({
+          timestamp: new Date().toISOString(),
+          endpoint: 'analyze-goal',
+          model: 'claude-3-haiku-20240307',
+          requestData: { goal },
+          error: `API Error: ${response.status} ${response.statusText}`,
+          duration
+        })
+      } catch (logError) {
+        console.error('Failed to log API error:', logError)
+      }
       
       return NextResponse.json(getMockResponse(goal))
     }
@@ -119,18 +125,22 @@ Keep the response focused on medical spa marketing best practices.`
       result = JSON.parse(content)
       console.log('Claude response result:', result)
       
-      // Log successful API call
-      await logClaudeAPICall({
-        timestamp: new Date().toISOString(),
-        endpoint: 'analyze-goal',
-        model: 'claude-3-haiku-20240307',
-        inputTokens: usage.input_tokens,
-        outputTokens: usage.output_tokens,
-        cost,
-        requestData: { goal },
-        responseData: result,
-        duration
-      })
+      // Try to log successful API call (but don't fail if logging fails)
+      try {
+        await logClaudeAPICall({
+          timestamp: new Date().toISOString(),
+          endpoint: 'analyze-goal',
+          model: 'claude-3-haiku-20240307',
+          inputTokens: usage.input_tokens,
+          outputTokens: usage.output_tokens,
+          cost,
+          requestData: { goal },
+          responseData: result,
+          duration
+        })
+      } catch (logError) {
+        console.error('Failed to log API success:', logError)
+      }
 
     } catch (e) {
       console.error('Failed to parse Claude response:', e)
