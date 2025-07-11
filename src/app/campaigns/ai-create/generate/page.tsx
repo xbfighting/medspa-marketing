@@ -21,7 +21,8 @@ import {
   Edit3,
   Eye,
   Copy,
-  Check
+  Check,
+  Send
 } from 'lucide-react'
 import { generateContent, generateSubjectLine, generatePreviewText } from '@/lib/ai-templates'
 import { EnhancedEmailEditor } from '@/components/campaigns/enhanced-email-editor'
@@ -570,18 +571,20 @@ export default function GeneratePage() {
               Customize Further
             </Button>
             <Button 
+              size="lg"
               onClick={handleCreateCampaign}
               disabled={isCreating}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
               {isCreating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
+                  Scheduling...
                 </>
               ) : (
                 <>
-                  Create Campaign
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <Send className="mr-2 h-4 w-4" />
+                  Schedule Campaign
                 </>
               )}
             </Button>
