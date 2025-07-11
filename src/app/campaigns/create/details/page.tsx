@@ -13,12 +13,10 @@ import { ProgressIndicator } from '@/components/campaigns/progress-indicator'
 import { 
   Calendar,
   Clock,
-  DollarSign,
   Mail,
   MessageSquare,
   ChevronRight,
-  ArrowLeft,
-  Info
+  ArrowLeft
 } from 'lucide-react'
 import templatesData from '@/data/strategy-templates.json'
 import { format, addDays } from 'date-fns'
@@ -30,8 +28,6 @@ interface CampaignDetails {
   schedule: 'now' | 'later'
   scheduledDate: string
   scheduledTime: string
-  budget: string
-  expectedReach: string
 }
 
 export default function DetailsPage() {
@@ -46,9 +42,7 @@ export default function DetailsPage() {
     description: '',
     schedule: 'later',
     scheduledDate: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
-    scheduledTime: '10:00',
-    budget: '500',
-    expectedReach: ''
+    scheduledTime: '10:00'
   })
 
   useEffect(() => {
@@ -276,46 +270,6 @@ export default function DetailsPage() {
           </CardContent>
         </Card>
 
-        {/* Budget */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Budget & Reach</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="budget">Campaign Budget ($)</Label>
-              <div className="relative mt-1">
-                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  id="budget"
-                  type="number"
-                  value={details.budget}
-                  onChange={(e) => setDetails({ ...details, budget: e.target.value })}
-                  className="pl-10"
-                  placeholder="0.00"
-                  min="0"
-                  step="50"
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Estimated cost based on selected customers and campaign type
-              </p>
-            </div>
-
-            <div className="bg-blue-50 rounded-lg p-4 flex gap-3">
-              <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-blue-900">Budget Estimation</p>
-                <p className="text-blue-700 mt-1">
-                  Email: ~$0.02 per recipient • SMS: ~$0.05 per message
-                </p>
-                <p className="text-blue-700">
-                  Final cost will be calculated based on selected customers
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Action Buttons */}
