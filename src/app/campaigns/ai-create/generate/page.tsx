@@ -56,6 +56,8 @@ export default function GeneratePage() {
   const [campaignType, setCampaignType] = useState<'Email' | 'SMS'>('Email')
   const [editedContent, setEditedContent] = useState<GeneratedContent | null>(null)
   const [copiedToClipboard, setCopiedToClipboard] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   
   const steps: GenerationStep[] = [
     { id: 'analyze', label: 'Analyzing strategy and customers', status: 'pending' },
@@ -65,6 +67,30 @@ export default function GeneratePage() {
   ]
 
   const [stepStatuses, setStepStatuses] = useState(steps)
+
+  // Generate smart campaign name
+  const generateCampaignName = (data: any, content: GeneratedContent): string => {
+    const date = new Date()
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const month = monthNames[date.getMonth()]
+    
+    // Based on strategy and content
+    if (data.strategyId === 'urgent-slots') {
+      return `Last-Minute Slots - ${month} ${date.getDate()}`
+    } else if (data.strategyId === 'flash-sale') {
+      return `Flash Sale: ${data.customization?.discount || '20%'} Off - ${month}`
+    } else if (data.strategyId === 'vip-winback') {
+      return `VIP Win-Back Campaign - ${month} ${date.getFullYear()}`
+    } else if (content.subject.includes('Birthday')) {
+      return `Birthday Celebration - ${month}`
+    } else if (content.subject.includes('Exclusive')) {
+      return `Exclusive Offer - ${data.customerIds.length} VIP Customers`
+    } else {
+      // Fallback to goal-based naming
+      const goalWords = data.goal.split(' ').slice(0, 4).join(' ')
+      return `${goalWords} - ${month} ${date.getDate()}`
+    }
+  }
 
   useEffect(() => {
     // Retrieve data from session storage
@@ -176,9 +202,19 @@ export default function GeneratePage() {
     const finalContent = editedContent || generatedContent
     if (!finalContent) return
 
-    // Create campaign object
-    const newCampaign = {
-      name: `AI Campaign - ${campaignData.goal.slice(0, 30)}...`,
+    setIsCreating(true)
+    setError(null)
+
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Generate smart campaign name based on strategy and goal
+      const campaignName = generateCampaignName(campaignData, finalContent)
+      
+      // Create campaign object
+      const newCampaign = {
+      name: campaignName,
       type: campaignType,
       status: 'Scheduled',
       subject: finalContent.subject,
@@ -188,7 +224,11 @@ export default function GeneratePage() {
       ctaUrl: finalContent.cta.url,
       targetCustomerIds: campaignData.customerIds,
       createdWithAI: true,
+      aiStrategy: campaignData.strategyId,
+      aiGoal: campaignData.goal,
+      customization: campaignData.customization,
       scheduledDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      createdAt: new Date().toISOString(),
       performance: {
         sent: 0,
         delivered: 0,
@@ -208,8 +248,12 @@ export default function GeneratePage() {
     sessionStorage.removeItem('strategy_customization')
     sessionStorage.removeItem('selected_customers')
 
-    // Redirect to campaigns page
-    router.push('/campaigns')
+      // Redirect to campaigns page
+      router.push('/campaigns')
+    } catch (err) {
+      setError('Failed to create campaign. Please try again.')
+      setIsCreating(false)
+    }
   }
 
   const updateContent = (field: keyof GeneratedContent, value: string) => {
@@ -506,6 +550,11 @@ export default function GeneratePage() {
         </div>
       )}
 
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">{error}</div>
+      )}
+
       {/* Action Buttons */}
       {generatedContent && !isGenerating && (
         <div className="flex justify-between items-center">
@@ -520,9 +569,21 @@ export default function GeneratePage() {
             >
               Customize Further
             </Button>
-            <Button onClick={handleCreateCampaign}>
-              Create Campaign
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button 
+              onClick={handleCreateCampaign}
+              disabled={isCreating}
+            >
+              {isCreating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  Create Campaign
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
           </div>
         </div>

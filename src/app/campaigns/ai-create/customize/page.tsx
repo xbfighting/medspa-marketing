@@ -9,7 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Users, Filter, ChevronRight, Search, DollarSign, Calendar, Award } from 'lucide-react'
+import { Users, Filter, ChevronRight, Search, DollarSign, Calendar, Award, Loader2 } from 'lucide-react'
 import customersData from '@/data/customers.json'
 import { Customer } from '@/lib/types'
 
@@ -23,6 +23,7 @@ interface FilterOptions {
 
 export default function CustomizePage() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
   const [filters, setFilters] = useState<FilterOptions>({
     lifecycle: ['At-Risk', 'Dormant'],
     loyaltyTier: [],
@@ -39,6 +40,12 @@ export default function CustomizePage() {
   useEffect(() => {
     const strategyId = sessionStorage.getItem('selected_strategy')
     const customization = JSON.parse(sessionStorage.getItem('strategy_customization') || '{}')
+    
+    if (!strategyId) {
+      router.push('/campaigns/ai-create/strategies')
+      return
+    }
+    
     setStrategyInfo({ strategyId, customization })
     
     // Auto-select based on strategy
@@ -51,6 +58,8 @@ export default function CustomizePage() {
         loyaltyTier: ['Gold', 'Platinum'] 
       }))
     }
+    
+    setIsLoading(false)
   }, [])
 
   // Filter customers based on all criteria
@@ -151,8 +160,22 @@ export default function CustomizePage() {
   }
 
   const handleProceed = () => {
+    if (selectedCustomers.length === 0) {
+      return
+    }
     sessionStorage.setItem('selected_customers', JSON.stringify(selectedCustomers))
     router.push('/campaigns/ai-create/generate')
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-purple-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading customer data...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -38,6 +38,7 @@ export default function StrategiesPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(true)
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [modalStrategy, setModalStrategy] = useState<Strategy | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const goal = sessionStorage.getItem('campaign_goal')
@@ -49,8 +50,10 @@ export default function StrategiesPage() {
   }, [router])
 
   const analyzeGoal = async (goal: string) => {
-    // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    try {
+      setError(null)
+      // Simulate AI processing
+      await new Promise(resolve => setTimeout(resolve, 1500))
 
     // Mock AI understanding
     const mockUnderstanding: Understanding = {
@@ -114,6 +117,10 @@ export default function StrategiesPage() {
 
     setStrategies(mockStrategies)
     setIsAnalyzing(false)
+    } catch (err) {
+      setError('Failed to analyze your goal. Please try again.')
+      setIsAnalyzing(false)
+    }
   }
 
   const handleStrategySelect = (strategy: Strategy) => {
@@ -133,6 +140,31 @@ export default function StrategiesPage() {
         <div className="text-center">
           <Brain className="h-12 w-12 text-purple-600 mx-auto mb-4 animate-pulse" />
           <p className="text-lg text-gray-600">AI is analyzing your marketing goal...</p>
+          <p className="text-sm text-gray-500 mt-2">This may take a few seconds</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Card className="p-6 max-w-md">
+            <div className="text-red-600 mb-4">
+              <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p className="text-gray-900 font-medium mb-2">{error}</p>
+            <div className="flex gap-3 justify-center mt-4">
+              <Button variant="outline" onClick={() => router.push('/')}>Go Back</Button>
+              <Button onClick={() => {
+                const goal = sessionStorage.getItem('campaign_goal')
+                if (goal) analyzeGoal(goal)
+              }}>Try Again</Button>
+            </div>
+          </Card>
         </div>
       </div>
     )
