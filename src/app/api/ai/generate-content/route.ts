@@ -45,7 +45,6 @@ export async function POST(request: Request) {
     // Check if Claude API is enabled
     const enableClaudeAPI = process.env.ENABLE_CLAUDE_API !== 'false'
     const apiKey = process.env.CLAUDE_API_KEY
-    console.log('enableClaudeAPI', enableClaudeAPI)
 
     // Skip API call if disabled or no key
     if (!enableClaudeAPI || !apiKey) {
