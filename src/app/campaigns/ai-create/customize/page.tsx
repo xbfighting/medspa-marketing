@@ -60,7 +60,7 @@ export default function CustomizePage() {
     }
     
     setIsLoading(false)
-  }, [])
+  }, [router])
 
   // Filter customers based on all criteria
   const filteredCustomers = (customersData as any[]).filter((customer: any) => {

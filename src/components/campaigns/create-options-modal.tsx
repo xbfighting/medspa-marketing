@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Sparkles, Settings } from 'lucide-react'
+import { Sparkles, FileText } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface CreateOptionsModalProps {
@@ -55,12 +55,12 @@ export function CreateOptionsModal({ isOpen, onClose }: CreateOptionsModalProps)
           >
             <div className="flex items-start gap-3">
               <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
-                <Settings className="h-5 w-5 text-gray-600" />
+                <FileText className="h-5 w-5 text-gray-600" />
               </div>
               <div>
-                <h3 className="font-semibold">Manual Setup</h3>
+                <h3 className="font-semibold">Template Library</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  Create a campaign from scratch with full control
+                  Choose from proven templates and customize to your needs
                 </p>
               </div>
             </div>
