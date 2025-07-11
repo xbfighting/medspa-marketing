@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Card } from '@/components/ui/card'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
@@ -95,23 +95,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Alternative Path */}
-        <div className="mt-12 text-center">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex-1 h-px bg-gray-300" />
-            <span className="text-gray-500 px-4">or</span>
-            <div className="flex-1 h-px bg-gray-300" />
-          </div>
-
-          <Button
-            variant="outline"
-            onClick={() => router.push('/templates')}
-            size="lg"
-          >
-            Browse Strategy Templates
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
       </div>
     </div>
   )
