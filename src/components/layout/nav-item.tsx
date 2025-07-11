@@ -10,16 +10,20 @@ interface NavItemProps {
   label: string
   href: string
   collapsed?: boolean
+  exact?: boolean
 }
 
 export function NavItem({
   icon: Icon,
   label,
   href,
-  collapsed = false
+  collapsed = false,
+  exact = false
 }: NavItemProps) {
   const pathname = usePathname()
-  const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
+  const isActive = exact 
+    ? pathname === href 
+    : pathname === href || (href !== '/' && pathname.startsWith(href))
 
   return (
     <Link href={href} className="group">

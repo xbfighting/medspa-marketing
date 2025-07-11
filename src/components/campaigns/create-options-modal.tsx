@@ -58,7 +58,7 @@ export function CreateOptionsModal({ isOpen, onClose }: CreateOptionsModalProps)
                 <FileText className="h-5 w-5 text-gray-600" />
               </div>
               <div>
-                <h3 className="font-semibold">Template Library</h3>
+                <h3 className="font-semibold">Campaign Builder</h3>
                 <p className="text-sm text-gray-600 mt-1">
                   Choose from proven templates and customize to your needs
                 </p>

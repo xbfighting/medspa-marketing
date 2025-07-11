@@ -25,9 +25,10 @@ const navigation = [
     icon: FileEdit,
   },
   {
-    label: 'Campaigns',
+    label: 'My Campaigns',
     href: '/campaigns',
     icon: Mail,
+    exact: true,
   },
   {
     label: 'Templates',
@@ -66,6 +67,7 @@ export function Sidebar({ className }: SidebarProps) {
             icon={item.icon}
             label={item.label}
             href={item.href}
+            exact={item.exact}
           />
         ))}
       </nav>
