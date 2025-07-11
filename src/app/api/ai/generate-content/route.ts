@@ -227,40 +227,50 @@ Create content that would convert well for a medical spa audience.`
 function getMockContent(data: GenerateRequest): GeneratedContent {
   const { campaignType } = data
   
+  // Generate more realistic demo content based on the request data
+  const serviceName = data.details?.service || "HydraFacial Treatment"
+  const discount = data.details?.discount || data.customization?.discount || "20%"
+  const validUntil = data.details?.validUntil || "March 31, 2024"
+  const urgency = data.customization?.urgency || "Medium"
+  
+  // Sample names for demo
+  const sampleNames = ["Sarah", "Emma", "Michael", "Jessica", "David", "Sophie", "James", "Olivia"]
+  const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)]
+  
   if (campaignType === 'email') {
     return {
-      subject: "✨ [FirstName], Your Exclusive Spa Offer Awaits!",
-      preview: "Save [Discount] on your favorite treatments - Limited time only!",
+      subject: `✨ ${randomName}, Your Exclusive Spa Offer Awaits!`,
+      preview: `Save ${discount} on your favorite treatments - Limited time only!`,
       content: `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-  <div style="background-color: #9333ea; color: white; padding: 30px; text-align: center;">
-    <h1 style="margin: 0; font-size: 28px;">Exclusive Offer Just for You!</h1>
+  <div style="background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%); padding: 30px; text-align: center; border-bottom: 3px solid #9333ea;">
+    <h1 style="margin: 0; font-size: 28px; color: #1f2937;">Exclusive Offer Just for You!</h1>
   </div>
   
   <div style="padding: 30px; background-color: #f9fafb;">
     <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
-      Dear [FirstName],
+      Dear ${randomName},
     </p>
     
     <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
-      We've missed you at the spa! As one of our valued clients, we're offering you an exclusive [Discount] discount on [ServiceName].
+      We've missed you at the spa! As one of our valued Gold members, we're offering you an exclusive ${discount} discount on ${serviceName}.
     </p>
     
     <div style="background-color: white; border: 2px dashed #9333ea; padding: 20px; margin: 20px 0; text-align: center;">
       <p style="font-size: 20px; color: #9333ea; font-weight: bold; margin: 10px 0;">
-        Save [Discount] on [ServiceName]
+        Save ${discount} on ${serviceName}
       </p>
       <p style="font-size: 14px; color: #6b7280; margin: 10px 0;">
-        Valid until [ValidUntil] | Use code: EXCLUSIVE[Discount]
+        Valid until ${validUntil} | Use code: EXCLUSIVE${discount.replace('%', '')}
       </p>
     </div>
     
     <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
-      Don't miss this opportunity to treat yourself. Book your appointment today and rediscover the relaxation you deserve.
+      ${urgency === 'High' ? 'Limited spots available!' : ''} Don't miss this opportunity to treat yourself. Book your appointment today and rediscover the relaxation you deserve.
     </p>
     
     <div style="text-align: center; margin: 30px 0;">
-      <a href="#" style="background-color: #9333ea; color: white; padding: 15px 40px; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 8px; display: inline-block;">
+      <a href="https://book.radiancemedspa.com" style="background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%); color: white; padding: 15px 40px; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 8px; display: inline-block; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         Book Now
       </a>
     </div>
@@ -272,8 +282,8 @@ function getMockContent(data: GenerateRequest): GeneratedContent {
   
   <div style="background-color: #e5e7eb; padding: 20px; text-align: center;">
     <p style="font-size: 12px; color: #6b7280; margin: 0;">
-      © 2024 Your Medical Spa. All rights reserved.<br>
-      123 Spa Street, City, State 12345
+      © 2024 Radiance Medical Spa. All rights reserved.<br>
+      123 Beauty Avenue, Beverly Hills, CA 90210
     </p>
   </div>
 </div>`,
@@ -281,7 +291,7 @@ function getMockContent(data: GenerateRequest): GeneratedContent {
     }
   } else {
     return {
-      content: "Hi [FirstName]! 🌟 Save [Discount] on [ServiceName] this week only! Book now: [BookingLink] Reply STOP to opt out.",
+      content: `Hi ${randomName}! 🌟 Save ${discount} on ${serviceName} this week only! Book now: radiancemedspa.com/book Reply STOP to opt out.`,
       personalizationTokens: ["[FirstName]", "[Discount]", "[ServiceName]", "[BookingLink]"]
     }
   }

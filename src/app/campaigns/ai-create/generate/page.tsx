@@ -214,11 +214,15 @@ export default function GeneratePage() {
     const tone = (campaignData?.customization?.tone || 'friendly').charAt(0).toUpperCase() + 
                  (campaignData?.customization?.tone || 'friendly').slice(1) as any
     
+    // Sample names for demo
+    const sampleNames = ["Sarah", "Emma", "Michael", "Jessica", "David", "Sophie", "James", "Olivia"]
+    const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)]
+    
     const emailBody = generateContent({
       template,
       tone,
       personalization: {
-        customerName: '[FirstName]',
+        customerName: randomName,
         customFields: {
           discount: campaignData?.customization?.discount || '20%',
           treatments: '<li>Botox - Smooth away wrinkles</li><li>Dermal Fillers - Restore volume</li>',
@@ -228,10 +232,10 @@ export default function GeneratePage() {
       }
     })
 
-    const subject = generateSubjectLine(template, '[FirstName]', tone)
+    const subject = generateSubjectLine(template, randomName, tone)
     const preview = generatePreviewText(template, campaignData?.customization?.discount || '20%')
     
-    const smsContent = `Hi [FirstName]! 🌟 Exclusive ${campaignData?.customization?.discount || '20%'} off on select treatments this week only! Limited appointments. Book: [link] Reply STOP to opt out.`
+    const smsContent = `Hi ${randomName}! 🌟 Exclusive ${campaignData?.customization?.discount || '20%'} off on select treatments this week only! Limited appointments. Book: medspa.com/book Reply STOP to opt out.`
 
     return {
       type: campaignType,

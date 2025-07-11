@@ -170,6 +170,10 @@ export default function GeneratePage() {
     const tone = (customization?.tone || 'friendly').charAt(0).toUpperCase() + 
                  (customization?.tone || 'friendly').slice(1) as any
     
+    // Sample names for demo
+    const sampleNames = ["Sarah", "Emma", "Michael", "Jessica", "David", "Sophie", "James", "Olivia"]
+    const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)]
+    
     // Map strategy template to AI template or use fallback
     const aiTemplateMap: Record<string, string> = {
       'vip-winback': 'vip-exclusive',
@@ -205,7 +209,7 @@ export default function GeneratePage() {
       template: aiTemplateId,
       tone,
       personalization: {
-        customerName: '[FirstName]',
+        customerName: randomName,
         customFields: {
           discount: customization?.discount || '20%',
           treatments: '<li>Botox - Smooth away wrinkles</li><li>Dermal Fillers - Restore volume</li>',
@@ -215,11 +219,11 @@ export default function GeneratePage() {
       }
     })
 
-    const subject = generateSubjectLine(aiTemplateId, '[FirstName]', tone)
+    const subject = generateSubjectLine(aiTemplateId, randomName, tone)
     const preview = generatePreviewText(aiTemplateId, customization?.discount || '20%')
 
     // Generate SMS content
-    const smsContent = `Hi [FirstName]! 🌟 Exclusive ${customization?.discount || '20%'} off on ${template.name}. Limited time offer! Book now: [link] Reply STOP to opt out.`
+    const smsContent = `Hi ${randomName}! 🌟 Exclusive ${customization?.discount || '20%'} off on ${template.name}. Limited time offer! Book now: medspa.com/book Reply STOP to opt out.`
 
     const content: GeneratedContent = {
       type: campaignType,

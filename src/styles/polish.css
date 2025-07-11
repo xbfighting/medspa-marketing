@@ -134,11 +134,11 @@ button:disabled, a:disabled, .disabled {
   .no-print {
     display: none !important;
   }
-  
+
   .print-break-before {
     page-break-before: always;
   }
-  
+
   .print-break-after {
     page-break-after: always;
   }
@@ -149,7 +149,7 @@ button:disabled, a:disabled, .disabled {
   .card {
     border-width: 2px;
   }
-  
+
   .btn-outline {
     border-width: 2px;
   }
@@ -253,7 +253,7 @@ button:disabled, a:disabled, .disabled {
   color: #7c3aed;
 }
 
-.email-content ul, 
+.email-content ul,
 .email-content ol,
 .email-list {
   margin: 12px 0 !important;

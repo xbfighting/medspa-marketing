@@ -41,7 +41,7 @@ export const AI_TEMPLATES: AITemplate[] = [
           </div>
           <p>Book by <strong>{{deadline}}</strong> to secure your appointment.</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="background-color: #9333ea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Book Now</a>
+            <a href="#" style="background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">Book Now</a>
           </div>
         </div>
       `,
@@ -84,14 +84,14 @@ export const AI_TEMPLATES: AITemplate[] = [
         <div style="font-family: Arial, sans-serif; color: #333;">
           <p>Dear {{customerName}},</p>
           <p>As our valued <span style="color: #9333ea; font-weight: bold;">{{loyaltyTier}} member</span>, you've earned an exclusive reward!</p>
-          <div style="background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%); color: white; padding: 25px; border-radius: 8px; margin: 20px 0; text-align: center;">
-            <h2 style="margin: 0 0 10px 0; font-size: 24px;">{{exclusiveOffer}}</h2>
-            <p style="margin: 0; font-size: 20px;">Your savings: <strong>{{savingsAmount}}</strong></p>
+          <div style="background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%); padding: 25px; border-radius: 8px; margin: 20px 0; text-align: center; border: 2px solid #9333ea;">
+            <h2 style="margin: 0 0 10px 0; font-size: 24px; color: #1f2937;">{{exclusiveOffer}}</h2>
+            <p style="margin: 0; font-size: 20px; color: #374151;">Your savings: <strong style="color: #9333ea;">{{savingsAmount}}</strong></p>
           </div>
           <p>Plus, earn <strong>{{loyaltyPoints}} bonus points</strong> with this treatment.</p>
           <p style="color: #dc2626;">This exclusive offer is valid until <strong>{{validUntil}}</strong>.</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="background-color: #9333ea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Claim Your Reward</a>
+            <a href="#" style="background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">Claim Your Reward</a>
           </div>
         </div>
       `,
