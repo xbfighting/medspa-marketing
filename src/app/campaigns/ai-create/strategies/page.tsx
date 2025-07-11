@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Brain, TrendingUp, Clock, Users, CheckCircle } from 'lucide-react'
+import { StrategyDetailModal } from '@/components/campaigns/strategy-detail-modal'
 
 interface Understanding {
   goal: string
@@ -35,6 +36,8 @@ export default function StrategiesPage() {
   const [strategies, setStrategies] = useState<Strategy[]>([])
   const [selectedStrategy, setSelectedStrategy] = useState<string>('')
   const [isAnalyzing, setIsAnalyzing] = useState(true)
+  const [showDetailModal, setShowDetailModal] = useState(false)
+  const [modalStrategy, setModalStrategy] = useState<Strategy | null>(null)
 
   useEffect(() => {
     const goal = sessionStorage.getItem('campaign_goal')
@@ -113,8 +116,14 @@ export default function StrategiesPage() {
     setIsAnalyzing(false)
   }
 
-  const handleStrategySelect = (strategyId: string) => {
-    sessionStorage.setItem('selected_strategy', strategyId)
+  const handleStrategySelect = (strategy: Strategy) => {
+    setModalStrategy(strategy)
+    setShowDetailModal(true)
+  }
+
+  const handleModalConfirm = (customization: any) => {
+    sessionStorage.setItem('selected_strategy', modalStrategy?.id || '')
+    sessionStorage.setItem('strategy_customization', JSON.stringify(customization))
     router.push('/campaigns/ai-create/customize')
   }
 
@@ -225,7 +234,7 @@ export default function StrategiesPage() {
                     className="w-full"
                     onClick={(e) => {
                       e.stopPropagation()
-                      handleStrategySelect(strategy.id)
+                      handleStrategySelect(strategy)
                     }}
                   >
                     Use This Strategy
@@ -236,6 +245,14 @@ export default function StrategiesPage() {
           ))}
         </div>
       </div>
+
+      {/* Strategy Detail Modal */}
+      <StrategyDetailModal
+        strategy={modalStrategy}
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        onConfirm={handleModalConfirm}
+      />
     </div>
   )
 }
