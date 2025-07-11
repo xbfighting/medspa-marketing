@@ -1,0 +1,383 @@
+{
+  "templates": [
+    {
+      "id": "spring-refresh",
+      "name": "Spring Refresh Campaign",
+      "icon": "🌸",
+      "description": "Capitalize on spring renewal mindset to promote skincare treatments",
+      "category": "seasonal",
+      "metrics": {
+        "avgROI": "320%",
+        "successRate": "78%",
+        "timeline": "21 days",
+        "usageCount": 45
+      },
+      "tags": ["seasonal", "skincare", "multi-touch"],
+      "targetAudience": "All active customers",
+      "bestMonths": ["March", "April", "May"]
+    },
+    {
+      "id": "summer-body",
+      "name": "Summer Body Prep",
+      "icon": "☀️",
+      "description": "Target body contouring and skin treatments for summer readiness",
+      "category": "seasonal",
+      "metrics": {
+        "avgROI": "380%",
+        "successRate": "82%",
+        "timeline": "30 days",
+        "usageCount": 92
+      },
+      "tags": ["seasonal", "body", "planning"],
+      "targetAudience": "Customers interested in body treatments",
+      "bestMonths": ["April", "May", "June"]
+    },
+    {
+      "id": "holiday-glow",
+      "name": "Holiday Party Glow",
+      "icon": "✨",
+      "description": "Help customers look their best for holiday events and parties",
+      "category": "seasonal",
+      "metrics": {
+        "avgROI": "290%",
+        "successRate": "75%",
+        "timeline": "14 days",
+        "usageCount": 67
+      },
+      "tags": ["seasonal", "events", "facial"],
+      "targetAudience": "Active customers with event history",
+      "bestMonths": ["November", "December"]
+    },
+    {
+      "id": "new-year-transformation",
+      "name": "New Year, New You",
+      "icon": "🎊",
+      "description": "Leverage New Year resolutions for comprehensive treatment packages",
+      "category": "seasonal",
+      "metrics": {
+        "avgROI": "410%",
+        "successRate": "71%",
+        "timeline": "30 days",
+        "usageCount": 103
+      },
+      "tags": ["seasonal", "transformation", "packages"],
+      "targetAudience": "All customer segments",
+      "bestMonths": ["January", "February"]
+    },
+    {
+      "id": "vip-winback",
+      "name": "VIP Win-back Strategy",
+      "icon": "💎",
+      "description": "Re-engage high-value dormant customers with exclusive offers",
+      "category": "lifecycle",
+      "metrics": {
+        "avgROI": "420%",
+        "successRate": "89%",
+        "timeline": "14 days",
+        "usageCount": 127
+      },
+      "tags": ["re-engagement", "high-value", "proven"],
+      "targetAudience": "Dormant VIP customers"
+    },
+    {
+      "id": "welcome-series",
+      "name": "New Patient Welcome",
+      "icon": "👋",
+      "description": "Onboard new patients with educational content and intro offers",
+      "category": "lifecycle",
+      "metrics": {
+        "avgROI": "350%",
+        "successRate": "85%",
+        "timeline": "30 days",
+        "usageCount": 201
+      },
+      "tags": ["onboarding", "education", "retention"],
+      "targetAudience": "New customers (first 30 days)"
+    },
+    {
+      "id": "loyalty-rewards",
+      "name": "Loyalty Milestone Rewards",
+      "icon": "🏆",
+      "description": "Celebrate customer milestones with exclusive perks",
+      "category": "lifecycle",
+      "metrics": {
+        "avgROI": "380%",
+        "successRate": "91%",
+        "timeline": "7 days",
+        "usageCount": 156
+      },
+      "tags": ["loyalty", "retention", "rewards"],
+      "targetAudience": "Long-term active customers"
+    },
+    {
+      "id": "at-risk-prevention",
+      "name": "Churn Prevention Campaign",
+      "icon": "🚨",
+      "description": "Identify and re-engage customers showing signs of churning",
+      "category": "lifecycle",
+      "metrics": {
+        "avgROI": "340%",
+        "successRate": "67%",
+        "timeline": "21 days",
+        "usageCount": 89
+      },
+      "tags": ["retention", "at-risk", "preventive"],
+      "targetAudience": "At-risk customers (reduced activity)"
+    },
+    {
+      "id": "birthday-vip",
+      "name": "Birthday VIP Treatment",
+      "icon": "🎂",
+      "description": "Make customers feel special with birthday month offers",
+      "category": "lifecycle",
+      "metrics": {
+        "avgROI": "290%",
+        "successRate": "88%",
+        "timeline": "30 days",
+        "usageCount": 234
+      },
+      "tags": ["birthday", "personalized", "special-occasion"],
+      "targetAudience": "Customers with birthday in target month"
+    },
+    {
+      "id": "botox-maintenance",
+      "name": "Botox Maintenance Reminder",
+      "icon": "💉",
+      "description": "Timely reminders for Botox touch-ups every 3-4 months",
+      "category": "treatment",
+      "metrics": {
+        "avgROI": "450%",
+        "successRate": "92%",
+        "timeline": "7 days",
+        "usageCount": 312
+      },
+      "tags": ["maintenance", "botox", "recurring"],
+      "targetAudience": "Botox patients due for treatment"
+    },
+    {
+      "id": "filler-followup",
+      "name": "Filler Maintenance Program",
+      "icon": "💋",
+      "description": "Keep dermal filler results optimal with timely touch-ups",
+      "category": "treatment",
+      "metrics": {
+        "avgROI": "390%",
+        "successRate": "87%",
+        "timeline": "14 days",
+        "usageCount": 189
+      },
+      "tags": ["maintenance", "fillers", "recurring"],
+      "targetAudience": "Filler patients (6-12 months)"
+    },
+    {
+      "id": "laser-package",
+      "name": "Laser Treatment Series",
+      "icon": "⚡",
+      "description": "Promote multi-session laser packages for better results",
+      "category": "treatment",
+      "metrics": {
+        "avgROI": "360%",
+        "successRate": "73%",
+        "timeline": "45 days",
+        "usageCount": 78
+      },
+      "tags": ["laser", "packages", "series"],
+      "targetAudience": "Customers interested in laser treatments"
+    },
+    {
+      "id": "skincare-upgrade",
+      "name": "Skincare Regimen Upgrade",
+      "icon": "🧴",
+      "description": "Upsell medical-grade skincare to treatment patients",
+      "category": "treatment",
+      "metrics": {
+        "avgROI": "280%",
+        "successRate": "69%",
+        "timeline": "14 days",
+        "usageCount": 145
+      },
+      "tags": ["skincare", "upsell", "products"],
+      "targetAudience": "Recent treatment patients"
+    },
+    {
+      "id": "event-prep",
+      "name": "Special Event Prep",
+      "icon": "👰",
+      "description": "Target customers preparing for weddings, reunions, or events",
+      "category": "event",
+      "metrics": {
+        "avgROI": "340%",
+        "successRate": "81%",
+        "timeline": "60 days",
+        "usageCount": 56
+      },
+      "tags": ["events", "planning", "packages"],
+      "targetAudience": "Customers with upcoming events"
+    },
+    {
+      "id": "flash-friday",
+      "name": "Flash Friday Sales",
+      "icon": "⚡",
+      "description": "Create urgency with limited Friday-only deals",
+      "category": "event",
+      "metrics": {
+        "avgROI": "310%",
+        "successRate": "76%",
+        "timeline": "1 day",
+        "usageCount": 198
+      },
+      "tags": ["flash-sale", "urgency", "weekly"],
+      "targetAudience": "Price-sensitive active customers"
+    },
+    {
+      "id": "referral-reward",
+      "name": "Referral Rewards Program",
+      "icon": "🤝",
+      "description": "Incentivize customers to refer friends and family",
+      "category": "event",
+      "metrics": {
+        "avgROI": "520%",
+        "successRate": "64%",
+        "timeline": "30 days",
+        "usageCount": 167
+      },
+      "tags": ["referral", "word-of-mouth", "incentive"],
+      "targetAudience": "Satisfied active customers"
+    },
+    {
+      "id": "membership-launch",
+      "name": "VIP Membership Launch",
+      "icon": "👑",
+      "description": "Convert regular customers to recurring membership model",
+      "category": "event",
+      "metrics": {
+        "avgROI": "480%",
+        "successRate": "71%",
+        "timeline": "14 days",
+        "usageCount": 43
+      },
+      "tags": ["membership", "recurring", "vip"],
+      "targetAudience": "High-frequency customers"
+    },
+    {
+      "id": "post-treatment-care",
+      "name": "Post-Treatment Care Series",
+      "icon": "🌟",
+      "description": "Nurture patients after major treatments for satisfaction and retention",
+      "category": "lifecycle",
+      "metrics": {
+        "avgROI": "260%",
+        "successRate": "94%",
+        "timeline": "30 days",
+        "usageCount": 289
+      },
+      "tags": ["aftercare", "satisfaction", "retention"],
+      "targetAudience": "Recent treatment patients"
+    },
+    {
+      "id": "seasonal-skin-check",
+      "name": "Seasonal Skin Assessment",
+      "icon": "🔍",
+      "description": "Quarterly skin health check-ups and treatment recommendations",
+      "category": "seasonal",
+      "metrics": {
+        "avgROI": "330%",
+        "successRate": "77%",
+        "timeline": "14 days",
+        "usageCount": 124
+      },
+      "tags": ["assessment", "preventive", "quarterly"],
+      "targetAudience": "All active customers"
+    },
+    {
+      "id": "couples-package",
+      "name": "Couples Treatment Special",
+      "icon": "💑",
+      "description": "Target couples for joint treatment sessions and packages",
+      "category": "event",
+      "metrics": {
+        "avgROI": "370%",
+        "successRate": "72%",
+        "timeline": "21 days",
+        "usageCount": 87
+      },
+      "tags": ["couples", "packages", "special"],
+      "targetAudience": "Customers with partners"
+    },
+    {
+      "id": "anti-aging-series",
+      "name": "Anti-Aging Journey",
+      "icon": "⏳",
+      "description": "Comprehensive anti-aging treatment program for mature clients",
+      "category": "treatment",
+      "metrics": {
+        "avgROI": "395%",
+        "successRate": "79%",
+        "timeline": "90 days",
+        "usageCount": 112
+      },
+      "tags": ["anti-aging", "comprehensive", "long-term"],
+      "targetAudience": "Customers 45+ interested in anti-aging"
+    },
+    {
+      "id": "acne-clear-program",
+      "name": "Clear Skin Success",
+      "icon": "🌟",
+      "description": "Multi-step acne treatment program for lasting results",
+      "category": "treatment",
+      "metrics": {
+        "avgROI": "310%",
+        "successRate": "74%",
+        "timeline": "60 days",
+        "usageCount": 98
+      },
+      "tags": ["acne", "program", "results-driven"],
+      "targetAudience": "Customers with acne concerns"
+    },
+    {
+      "id": "mommy-makeover",
+      "name": "Mommy Makeover Package",
+      "icon": "👶",
+      "description": "Restore confidence with post-pregnancy treatment packages",
+      "category": "event",
+      "metrics": {
+        "avgROI": "425%",
+        "successRate": "86%",
+        "timeline": "45 days",
+        "usageCount": 76
+      },
+      "tags": ["post-pregnancy", "transformation", "package"],
+      "targetAudience": "New mothers (6+ months postpartum)"
+    },
+    {
+      "id": "mens-grooming",
+      "name": "Gentleman's Grooming",
+      "icon": "🎩",
+      "description": "Targeted campaigns for male aesthetic treatments",
+      "category": "treatment",
+      "metrics": {
+        "avgROI": "360%",
+        "successRate": "70%",
+        "timeline": "21 days",
+        "usageCount": 134
+      },
+      "tags": ["mens", "grooming", "targeted"],
+      "targetAudience": "Male customers and prospects"
+    },
+    {
+      "id": "wellness-wednesday",
+      "name": "Wellness Wednesday",
+      "icon": "🧘",
+      "description": "Weekly wellness tips with treatment suggestions",
+      "category": "event",
+      "metrics": {
+        "avgROI": "285%",
+        "successRate": "82%",
+        "timeline": "ongoing",
+        "usageCount": 223
+      },
+      "tags": ["wellness", "educational", "weekly"],
+      "targetAudience": "Health-conscious customers"
+    }
+  ]
+}
