@@ -41,11 +41,12 @@ interface GeneratedContent {
 export async function POST(request: Request) {
   try {
     const data = await request.json() as GenerateRequest
-    
+
     // Check if Claude API is enabled
     const enableClaudeAPI = process.env.ENABLE_CLAUDE_API !== 'false'
     const apiKey = process.env.CLAUDE_API_KEY
-    
+    console.log('enableClaudeAPI', enableClaudeAPI)
+
     // Skip API call if disabled or no key
     if (!enableClaudeAPI || !apiKey) {
       console.log('Claude API disabled or not configured, using mock content')
@@ -54,8 +55,8 @@ export async function POST(request: Request) {
 
     // Build context based on flow type
     const isManualFlow = !!data.template
-    const context = isManualFlow ? 
-      buildManualFlowContext(data) : 
+    const context = isManualFlow ?
+      buildManualFlowContext(data) :
       buildAIFlowContext(data)
 
     // Call Claude API
@@ -82,7 +83,7 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       console.error('Claude API error:', response.status, response.statusText)
-      
+
       // Try to log the error (but don't fail if logging fails)
       try {
         await logClaudeAPICall({
@@ -96,13 +97,13 @@ export async function POST(request: Request) {
       } catch (logError) {
         console.error('Failed to log API error:', logError)
       }
-      
+
       return NextResponse.json(getMockContent(data))
     }
 
     const responseData = await response.json()
     const content = responseData.content[0].text
-    
+
     // Extract usage info for logging
     const usage = responseData.usage || {}
     const cost = calculateCost(
@@ -115,7 +116,7 @@ export async function POST(request: Request) {
     let result: GeneratedContent
     try {
       result = JSON.parse(content)
-      
+
       // Try to log successful API call (but don't fail if logging fails)
       try {
         await logClaudeAPICall({
@@ -135,7 +136,7 @@ export async function POST(request: Request) {
 
     } catch (e) {
       console.error('Failed to parse Claude response:', e)
-      
+
       // Log parsing error
       await logClaudeAPICall({
         timestamp: new Date().toISOString(),
@@ -146,7 +147,7 @@ export async function POST(request: Request) {
         error: 'Failed to parse response',
         duration
       })
-      
+
       return NextResponse.json(getMockContent(data))
     }
 
@@ -154,15 +155,15 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Error in generate-content:', error)
-    return NextResponse.json({ 
-      error: 'Failed to generate content' 
+    return NextResponse.json({
+      error: 'Failed to generate content'
     }, { status: 500 })
   }
 }
 
 function buildAIFlowContext(data: GenerateRequest): string {
   const { campaignType, strategy, customization, customerSegment } = data
-  
+
   return `You are a medical spa marketing expert. Generate a ${campaignType} campaign based on this strategy:
 
 Strategy: ${strategy.name} - ${strategy.description}
@@ -194,7 +195,7 @@ Keep the tone ${customization?.tone || 'professional'} and the urgency level ${c
 
 function buildManualFlowContext(data: GenerateRequest): string {
   const { campaignType, template, details } = data
-  
+
   return `You are a medical spa marketing expert. Generate a ${campaignType} campaign based on this template:
 
 Template: ${template?.name} - ${template?.description}
@@ -226,17 +227,17 @@ Create content that would convert well for a medical spa audience.`
 
 function getMockContent(data: GenerateRequest): GeneratedContent {
   const { campaignType } = data
-  
+
   // Generate more realistic demo content based on the request data
   const serviceName = data.details?.service || "HydraFacial Treatment"
   const discount = data.details?.discount || data.customization?.discount || "20%"
   const validUntil = data.details?.validUntil || "March 31, 2024"
   const urgency = data.customization?.urgency || "Medium"
-  
+
   // Sample names for demo
   const sampleNames = ["Sarah", "Emma", "Michael", "Jessica", "David", "Sophie", "James", "Olivia"]
   const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)]
-  
+
   if (campaignType === 'email') {
     return {
       subject: `✨ ${randomName}, Your Exclusive Spa Offer Awaits!`,
@@ -246,16 +247,16 @@ function getMockContent(data: GenerateRequest): GeneratedContent {
   <div style="background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%); padding: 30px; text-align: center; border-bottom: 3px solid #9333ea;">
     <h1 style="margin: 0; font-size: 28px; color: #1f2937;">Exclusive Offer Just for You!</h1>
   </div>
-  
+
   <div style="padding: 30px; background-color: #f9fafb;">
     <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
       Dear ${randomName},
     </p>
-    
+
     <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
       We've missed you at the spa! As one of our valued Gold members, we're offering you an exclusive ${discount} discount on ${serviceName}.
     </p>
-    
+
     <div style="background-color: white; border: 2px dashed #9333ea; padding: 20px; margin: 20px 0; text-align: center;">
       <p style="font-size: 20px; color: #9333ea; font-weight: bold; margin: 10px 0;">
         Save ${discount} on ${serviceName}
@@ -264,22 +265,22 @@ function getMockContent(data: GenerateRequest): GeneratedContent {
         Valid until ${validUntil} | Use code: EXCLUSIVE${discount.replace('%', '')}
       </p>
     </div>
-    
+
     <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
       ${urgency === 'High' ? 'Limited spots available!' : ''} Don't miss this opportunity to treat yourself. Book your appointment today and rediscover the relaxation you deserve.
     </p>
-    
+
     <div style="text-align: center; margin: 30px 0;">
       <a href="https://book.radiancemedspa.com" style="background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%); color: white; padding: 15px 40px; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 8px; display: inline-block; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         Book Now
       </a>
     </div>
-    
+
     <p style="font-size: 14px; color: #6b7280; text-align: center;">
       Questions? Call us at (555) 123-4567 or reply to this email.
     </p>
   </div>
-  
+
   <div style="background-color: #e5e7eb; padding: 20px; text-align: center;">
     <p style="font-size: 12px; color: #6b7280; margin: 0;">
       © 2024 Radiance Medical Spa. All rights reserved.<br>
