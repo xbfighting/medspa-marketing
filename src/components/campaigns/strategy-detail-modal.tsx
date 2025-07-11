@@ -9,13 +9,15 @@ interface StrategyDetailModalProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: (customization: any) => void
+  mode?: 'strategy' | 'template'
 }
 
 export function StrategyDetailModal({
   strategy,
   isOpen,
   onClose,
-  onConfirm
+  onConfirm,
+  mode = 'strategy'
 }: StrategyDetailModalProps) {
   const [customization, setCustomization] = useState({
     discount: '20%',
