@@ -7,16 +7,16 @@ import {
   Mail, 
   BarChart3, 
   Settings,
-  Home,
+  Sparkles,
   Layers
 } from 'lucide-react'
 import { NavItem } from './nav-item'
 
 const navigation = [
   {
-    label: 'Home',
+    label: 'AI Assistant',
     href: '/',
-    icon: Home,
+    icon: Sparkles,
   },
   {
     label: 'Campaigns',
