@@ -52,71 +52,25 @@ export default function StrategiesPage() {
   const analyzeGoal = async (goal: string) => {
     try {
       setError(null)
-      // Simulate AI processing
-      await new Promise(resolve => setTimeout(resolve, 1500))
-
-    // Mock AI understanding
-    const mockUnderstanding: Understanding = {
-      goal: goal.includes('fill') ? 'Fill Appointments' :
-            goal.includes('re-engage') ? 'Customer Reactivation' :
-            'Promote Services',
-      target: goal.includes('haven\'t visited') ? 'Dormant Customers' :
-              goal.includes('active') ? 'Active Customers' :
-              'All Customers',
-      urgency: goal.includes('next week') || goal.includes('Tuesday') ? 'High' : 'Medium',
-      timeline: goal.includes('next week') ? '7 days' : '14-21 days',
-      strategy: goal.includes('re-engage') ? 'win-back' :
-                goal.includes('fill') ? 'urgent-booking' :
-                'promotional'
-    }
-
-    setUnderstanding(mockUnderstanding)
-
-    // Mock strategy recommendations
-    const mockStrategies: Strategy[] = [
-      {
-        id: 'urgent-slots',
-        name: 'Last-Minute Slot Filler',
-        icon: '⏰',
-        description: 'Fill empty appointments quickly with time-sensitive offers',
-        metrics: {
-          avgROI: '280%',
-          successRate: '72%',
-          timeline: '3-5 days',
-          usageCount: 89
+      
+      // Call API to analyze goal
+      const response = await fetch('/api/ai/analyze-goal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        tags: ['urgent', 'appointments', 'quick-win']
-      },
-      {
-        id: 'flash-sale',
-        name: 'Flash Sale Campaign',
-        icon: '⚡',
-        description: 'Create urgency with limited-time exclusive offers',
-        metrics: {
-          avgROI: '340%',
-          successRate: '68%',
-          timeline: '7 days',
-          usageCount: 156
-        },
-        tags: ['promotional', 'urgency', 'conversion']
-      },
-      {
-        id: 'exclusive-vip',
-        name: 'VIP Exclusive Access',
-        icon: '👑',
-        description: 'Make customers feel special with exclusive appointment slots',
-        metrics: {
-          avgROI: '410%',
-          successRate: '81%',
-          timeline: '5-7 days',
-          usageCount: 203
-        },
-        tags: ['vip', 'exclusive', 'loyalty']
+        body: JSON.stringify({ goal })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze goal')
       }
-    ]
 
-    setStrategies(mockStrategies)
-    setIsAnalyzing(false)
+      const data = await response.json()
+      
+      setUnderstanding(data.understanding)
+      setStrategies(data.strategies)
+      setIsAnalyzing(false)
     } catch (err) {
       setError('Failed to analyze your goal. Please try again.')
       setIsAnalyzing(false)
