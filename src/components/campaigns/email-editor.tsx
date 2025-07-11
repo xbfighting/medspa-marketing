@@ -211,13 +211,13 @@ export function EmailEditor({
               >
                 <Smile className="h-4 w-4" />
               </ToolbarButton>
-              <div className="absolute top-full left-0 mt-1 p-2 bg-white border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+              <div className="absolute top-full left-0 mt-1 p-2 bg-white border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 w-max">
                 <div className="grid grid-cols-5 gap-1">
                   {commonEmojis.map((emoji, index) => (
                     <button
                       key={index}
                       onClick={() => insertEmoji(emoji)}
-                      className="p-1 hover:bg-gray-100 rounded text-lg"
+                      className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded text-lg transition-colors"
                       title={`Insert ${emoji}`}
                     >
                       {emoji}
