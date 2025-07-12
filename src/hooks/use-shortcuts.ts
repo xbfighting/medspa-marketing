@@ -52,7 +52,7 @@ export function useShortcuts(actions: ShortcutAction[] = []) {
       }
     },
     {
-      key: 'c',
+      key: 'k',
       ctrl: true,
       meta: true,
       description: 'Go to campaigns',
